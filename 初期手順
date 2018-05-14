@@ -1,0 +1,50 @@
+作成手順ってほどでもないけど
+どうやってlinebot作ったか記録してなかったから不便やし覚え書き
+
+1.heroku、github、cloud9で新しくプロジェクトを作成
+2.herokuからgithubをpipeline接続
+3.cloud9のphpをアップデート
+
+------------------------------
+apache2のPHP5.6用モジュールをインストール
+$ sudo add-apt-repository ppa:ondrej/php
+$ sudo apt-get update
+$ sudo apt-get install libapache2-mod-php5.6
+この時点で、おそらくPHP5.6はインストールされます。
+
+apache2の設定を5.6用に変更
+実際にApacheを起動した際に、ApacheがPHP5.6のモジュールを参照するように設定を変更します。
+
+$ sudo a2dismod php5
+$ sudo a2enmod php5.6
+Ubuntuのディストリビューションをアップグレード
+$ sudo add-apt-repository ppa:ondrej/php5-compat
+$ sudo apt-get update
+$ sudo apt-get dist-upgrade
+これで依存関係が解決されるはずです。
+
+以上で既存のPHPを5.6にバージョンアップする方法は完了です。
+------------------------------
+...らしいんやけど、diskの空き容量なくなるで、って言われたから最後のsudo apt-get dist-upgradeはしてないー
+
+
+4.LINE Developersで新しいmesseging APIを作成
+5.messeging APIの設定から
+    Webhook送信を利用する
+    Webhook SSL を 「https://(herokuのアプリ名).herokuapp.com:443」
+    ランダムアクセストークンの発行
+    
+6.linebotのsdkをダウンロード
+$ composer require linecorp/line-bot-sdk
+
+6.5.githubにcloud9の公開鍵を登録していなければ
+githubのSettings->SSH and GPG keysに
+$ cat ~/.ssh/id_rsa.pub
+で得られる公開鍵を登録しておく
+
+7.gitでカレントディレクトリのレポジトリを作成しpush
+$ git init
+$ git add -A
+$ git commit -m "first commit"
+$ git remote add origin git@github.com:(レポジトリ名).git
+$ git push -u origin master
