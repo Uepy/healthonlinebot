@@ -42,7 +42,7 @@
         // ユーザープロファイルの取得
         $profile = $bot -> getProfile($userId) -> getJSONDecodedBody();
         
-        $bot->replyText($event->getReplyToken(), getUserName($userId) .'さんの記録\n' .getUserRecord($userId) );
+        $bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
     }
 
     
@@ -97,12 +97,17 @@
       $dbh = dbConnection::getConnection();
       $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from \''.$userId.'\' ' ;
       $sth = $dbh->prepare($sql);
-      $ymd = array_column($sth->fetchAll(),'ymd')[0];
-      $weight = array_column($sth->fetchAll(),'weight')[0];
-      $muscle = array_column($sth->fetchAll(),'muscle')[0];
-      $wakeup = array_column($sth->fetchAll(),'wakeup')[0];
-      $sleep = array_column($sth->fetchAll(),'sleep')[0];
-      $teststring = '日付 : '. $ymd .'\n体重 : '. $weight .'\n筋肉量 : '. $muscle .'\n起床時刻 : '. $wakeup .'\n入眠時刻 : '. $sleep;
+      $ymd = array_column($sth->fetchAll(),'ymd');
+      $weight = array_column($sth->fetchAll(),'weight');
+      $muscle = array_column($sth->fetchAll(),'muscle');
+      $wakeup = array_column($sth->fetchAll(),'wakeup');
+      $sleep = array_column($sth->fetchAll(),'sleep');
+      error_log("\nymd : " . print_r($ymd,true));
+      error_log("\nweight : " . print_r($weight,true));
+      error_log("\nmuscle : " . print_r($muscle,true));
+      error_log("\nwakeup : " . print_r($wakeup,true));
+      error_log("\nsleep : " . print_r($sleep,true));
+      $teststring = "日付 : ". $ymd[0] ."\n体重 : ". $weight[0] ."\n筋肉量 : ". $muscle[0] ."\n起床時刻 : ". $wakeup[0] ."\n入眠時刻 : ". $sleep[0];
       return $teststring;
     }
     
