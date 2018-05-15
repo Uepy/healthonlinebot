@@ -42,7 +42,7 @@
         // ユーザープロファイルの取得
         $profile = $bot -> getProfile($userId) -> getJSONDecodedBody();
         
-        $bot->replyText($event->getReplyToken(), getUserName($userId) .'さんの記録\n' .getUserRecord() );
+        $bot->replyText($event->getReplyToken(), getUserName($userId) .'さんの記録\n' .getUserRecord($userId) );
     }
 
     
