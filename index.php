@@ -25,16 +25,19 @@
       error_log("parseEventRequest failed. InvalidEventRequestException => ".var_export($e, true));
     }
 
-    // ユーザーIDの取得
-    $userId = $event->getUserId();
-    
-    // ユーザープロファイルの取得
-    $profile = $bot -> getProfile($userId) -> getJSONDecodedBody();
+
   
   
 
     // 配列に格納された各イベントをループ処理
     foreach ($events as $event) {
+        
+        // ユーザーIDの取得
+        $userId = $event->getUserId();
+        
+        // ユーザープロファイルの取得
+        $profile = $bot -> getProfile($userId) -> getJSONDecodedBody();
+        
         $bot->replyText($event->getReplyToken(),'こんにちは、'+ $profile['displayName'] + 'さん。' );
     }
 
