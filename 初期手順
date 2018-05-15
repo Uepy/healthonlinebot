@@ -31,7 +31,7 @@ $ sudo apt-get dist-upgrade
 4.LINE Developersで新しいmesseging APIを作成
 5.messeging APIの設定から
     Webhook送信を利用する
-    Webhook SSL を 「https://(herokuのアプリ名).herokuapp.com:443」
+    Webhook SSL を 「https://(herokuのアプリ名).herokuapp.com」
     ランダムアクセストークンの発行
     
 6.linebotのsdkをダウンロード
@@ -48,3 +48,6 @@ $ git add -A
 $ git commit -m "first commit"
 $ git remote add origin git@github.com:(レポジトリ名).git
 $ git push -u origin master
+
+８. heroku にデプロイ
+$ git push heroku master

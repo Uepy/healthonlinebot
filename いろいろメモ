@@ -1,0 +1,38 @@
+herokuのログをコンソールで確認するコマンド
+heroku logs --app healthonlinebot -t
+
+githubにプッシュ
+git add .
+git commit -m "test commit"
+git push -u origin master
+
+herokuにデプロイ
+git add .
+git commit -m 'deploy!! heroku!'
+git push heroku master
+
+kazuki uedaのuserID
+U9a6675ed0946c116097b44bd69024fd4
+kodama userID
+Ud9ac91e5184b8b0a2a6163703d14f3a0
+
+
+データベースpostgresに接続
+heroku pg:psql --app evening-beyond-73630
+
+----------------------------
+postgres プロンプト
+テーブル一覧
+\dt 
+
+テーブルのフィールド詳細
+\d テーブル名
+
+すべてのレコードを見る
+select * from テーブル名
+----------------------------
+
+tbl_workers_infoに社員番号のフィールドを作るべき？
+
+line botを作ろうのブックマークメモ
+database 126p
