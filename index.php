@@ -38,7 +38,7 @@
         // ユーザープロファイルの取得
         $profile = $bot -> getProfile($userId) -> getJSONDecodedBody();
         
-        $bot->replyText($event->getReplyToken(),'こんにちは、'+ $profile['displayName'] + 'さん。' );
+        $bot->replyText($event->getReplyToken(),'こんにちは、'.$profile['displayName'] .'さん。' );
     }
 
     /*
