@@ -4,10 +4,10 @@
     date_default_timezone_set('Asia/Tokyo');
     
     //アクセストークンでCurlHTTPClientをインスタンス化
-    private $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient(getenv('CHANNEL_ACCESS_TOKEN'));
+    $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient(getenv('CHANNEL_ACCESS_TOKEN'));
     
     // CurlHTTPClient とシークレットを使いLineBotをインスタンス化
-    private $bot = new \LINE\LINEBot($httpClient,['channelSecret' => getenv('CHANNEL_SECRET')]);
+    $bot = new \LINE\LINEBot($httpClient,['channelSecret' => getenv('CHANNEL_SECRET')]);
     
     
     // LINE Messaging API がリクエストに付与した署名を取得
