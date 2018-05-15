@@ -65,5 +65,7 @@ create table U9a6675ed0946c116097b44bd69024fd4(
 insert into U9a6675ed0946c116097b44bd69024fd4 (ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo)
     values ('2017-05-15',59.3,32.4,'05:30','24:00',3,1,'パン ジャム ご飯 オムレツ','おにぎり2個','焼肉食べたい',false,true,'システム誠意作成中!');
     
+select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from U9a6675ed0946c116097b44bd69024fd4;
+    
     
 
