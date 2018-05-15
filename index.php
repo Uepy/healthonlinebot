@@ -3,6 +3,10 @@
     require_once __DIR__ . '/vendor/autoload.php';
     date_default_timezone_set('Asia/Tokyo');
     
+    // lineID、ユーザー名、身長等の基本情報テーブルのテーブル名を定義
+    define('TABLE_USERS_INFO','tbl_users_info');
+    
+    
     //アクセストークンでCurlHTTPClientをインスタンス化
     $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient(getenv('CHANNEL_ACCESS_TOKEN'));
     
@@ -38,10 +42,10 @@
         // ユーザープロファイルの取得
         $profile = $bot -> getProfile($userId) -> getJSONDecodedBody();
         
-        $bot->replyText($event->getReplyToken(),'こんにちは、'.$profile['displayName'] .'さん。' );
+        $bot->replyText($event->getReplyToken(),'こんにちは、'.getUserName($userId) .'さん。' );
     }
 
-    /*
+    
     
     // データベースへの接続を管理するクラス
     class dbConnection{
@@ -75,6 +79,17 @@
         
     }
     
-    */
+    
+    
+    // TABLE_TO_IDENTIFYの名前を返す
+    function getUserName($userId){
+      $dbh = dbConnection::getConnection();
+      $sql = 'select name from ' . TABLE_USERS_INFO . ' where ? =
+      (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') )' ;
+      $sth = $dbh->prepare($sql);
+      $sth->execute(array($userId));
+      $userName = array_column($sth->fetchAll(),'name');
+      return $userName[0];
+}
 
  ?>

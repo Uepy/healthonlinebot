@@ -1,0 +1,69 @@
+データベースpostgresに接続
+$ heroku pg:psql --app healthonlinebot
+
+バックスラッシュは option + ¥ で出せます \\\\
+
+テーブル一覧の表示
+\dt;
+
+テーブル構造の表示
+\d テーブル名;
+
+テーブル内のデータを一覧
+select * from テーブル名;
+
+-----
+暗号化のための関数 pgp_sym_encrypt を使うために pgcrypto をインストール
+CREATE EXTENSION pgcrypto;
+SELECT * FROM pg_available_extensions WHERE installed_version IS NOT NULL;
+-----
+
+create table tbl_users_info(
+    -- userid は lineのuseridのこと
+    userid bytea primary key,
+    name varchar(30),
+    -- 身長
+    height decimal(4,1),
+    -- 基礎代謝 basal metabolic rate
+    bmr decimal(5,1));
+    
+insert into tbl_users_info (name,userid,height,bmr) values ('うえぴー',pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd4','smiletobehealth'),182.3,1900.45);
+insert into tbl_users_info (userid) values (pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd4','smiletobehealth'));
+select pgp_sym_decrypt(userid,'smiletobehealth'),name,height,bmr from tbl_users_info;
+insert into tbl_users_info (userid,height) values (pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd5','smiletobehealth'),180);
+insert into tbl_users_info (userid,height) values (pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd6','smiletobehealth'),160.23);
+insert into tbl_users_info (userid,height) values (pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd7','smiletobehealth'),60.238);
+
+create table U9a6675ed0946c116097b44bd69024fd4(
+    -- 日付
+    ymd date unique,
+    -- 体重
+    weight decimal(4,1),
+    -- 筋肉量
+    muscle decimal(4,1),
+    -- 起床時刻
+    wakeup time,
+    -- 入眠時刻
+    sleep time,
+    -- 便の状態
+    bencon smallserial,
+    -- 筋肉痛具合
+    pain smallserial,
+    -- 朝食 
+    breakfast varchar(50),
+    -- 昼食
+    lunch varchar(50),
+    -- 夕食
+    dinner varchar(50),
+    -- 筋トレ
+    training boolean,
+    -- 体調
+    health boolean,
+    -- メモ
+    memo varchar(50) ) ;
+    
+insert into U9a6675ed0946c116097b44bd69024fd4 (ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo)
+    values ('2017-05-15',59.3,32.4,'05:30','24:00',3,1,'パン ジャム ご飯 オムレツ','おにぎり2個','焼肉食べたい',false,true,'システム誠意作成中!');
+    
+    
+
