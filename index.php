@@ -95,9 +95,8 @@
     // userId に一致するユーザーの記録を返す
     function getUserRecord($userId){
       $dbh = dbConnection::getConnection();
-      $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ? ' ;
+      $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from \''.$userId.'\' ' ;
       $sth = $dbh->prepare($sql);
-      $sth->execute(array($userId));
       $ymd = array_column($sth->fetchAll(),'ymd')[0];
       $weight = array_column($sth->fetchAll(),'weight')[0];
       $muscle = array_column($sth->fetchAll(),'muscle')[0];
