@@ -42,7 +42,7 @@
         // ユーザープロファイルの取得
         $profile = $bot -> getProfile($userId) -> getJSONDecodedBody();
         
-        $bot->replyText($event->getReplyToken(),'こんにちは、'.getUserName($userId) .'さん。' );
+        $bot->replyText($event->getReplyToken(), getUserName($userId) .'さんの記録\n' .getUserRecord() );
     }
 
     
@@ -81,7 +81,7 @@
     
     
     
-    // TABLE_TO_IDENTIFYの名前を返す
+    // TABLE_USERS_INFO の名前を返す
     function getUserName($userId){
       $dbh = dbConnection::getConnection();
       $sql = 'select name from ' . TABLE_USERS_INFO . ' where ? =
@@ -90,6 +90,22 @@
       $sth->execute(array($userId));
       $userName = array_column($sth->fetchAll(),'name');
       return $userName[0];
-}
+    }
+    
+    // userId に一致するユーザーの記録を返す
+    function getUserRecord($userId){
+      $dbh = dbConnection::getConnection();
+      $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ? ' ;
+      $sth = $dbh->prepare($sql);
+      $sth->execute(array($userId));
+      $ymd = array_column($sth->fetchAll(),'ymd')[0];
+      $weight = array_column($sth->fetchAll(),'weight')[0];
+      $muscle = array_column($sth->fetchAll(),'muscle')[0];
+      $wakeup = array_column($sth->fetchAll(),'wakeup')[0];
+      $sleep = array_column($sth->fetchAll(),'sleep')[0];
+      $teststring = '日付 : '. $ymd .'\n体重 : '. $weight .'\n筋肉量 : '. $muscle .'\n起床時刻 : '. $wakeup .'\n入眠時刻 : '. $sleep;
+      return $teststring;
+    }
+    
 
  ?>
