@@ -44,7 +44,13 @@
         
         $bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
     }
-
+    
+    
+    
+    
+    
+    
+    
     
     
     // データベースへの接続を管理するクラス
@@ -95,9 +101,8 @@
     // userId に一致するユーザーの記録を返す
     function getUserRecord($userId){
       $dbh = dbConnection::getConnection();
-      $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ? ' ;
-      $sth = $dbh->prepare($sql);
-      $sth->execute(array($userId));
+      $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ' .$userId ;
+      $sth = $dbh->query($sql);
       $result = $sth->fetchAll();
       //error_log("\nfetchAll : " . print_r($result,true));
       //error_log("\narraycolumn ymd : " . print_r(array_column($result,'ymd'),true));
@@ -112,5 +117,14 @@
       return $teststring;
     }
     
+    // テキストを返信 引数は、LINEbot、返信先、テキストメッセージ
+    function replyImageMessage($bot,$replyToken,$text){
+      $response = $bot->replyMessage($replyToken,
+      new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($text));
+      
+      if (!$response->isSucceeded()){
+        error_log('failed!' . $response->getHTTPStatus . ' ' . $response->getRawBody());
+      }
+    }
 
  ?>
