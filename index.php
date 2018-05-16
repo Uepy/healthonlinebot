@@ -102,6 +102,7 @@
       $muscle = array_column($sth->fetchAll(),'muscle');
       $wakeup = array_column($sth->fetchAll(),'wakeup');
       $sleep = array_column($sth->fetchAll(),'sleep');
+      error_log("\nsth : " . print_r($sth,true));
       error_log("\nymd : " . print_r($ymd,true));
       error_log("\nweight : " . print_r($weight,true));
       error_log("\nmuscle : " . print_r($muscle,true));
