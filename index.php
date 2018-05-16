@@ -99,12 +99,12 @@
       $sth = $dbh->query($sql);
       $result = $sth->fetchAll();
       error_log("\nfetchAll : " . print_r($result,true));
-      $teststring = "日付 : ". $result[ymd] ."\n体重 : ". $result[weight] .
-      "\n筋肉量 : ". $result[muscle] ."\n起床時刻 : ". $result[wakeup] .
-      "\n入眠時刻 : ". $result[sleep] ."\nうんちの状態 : ". $result[bencon].
-      "\n筋肉痛 : ". $result[pain] ."\n朝食 : ". $result[breakfast] .
-      "\n昼食 : ". $result[lunch] ."\n夕食 : ". $result[dinner] .
-      "\n筋トレ : ". $result[training] ."\n健康状態 : ". $result[health] ."\nメモ : ". $result[memo];
+      $teststring = "日付 : ". $result['ymd'] ."\n体重 : ". $result['weight'] .
+      "\n筋肉量 : ". $result['muscle'] ."\n起床時刻 : ". $result['wakeup'] .
+      "\n入眠時刻 : ". $result['sleep'] ."\nうんちの状態 : ". $result['bencon'].
+      "\n筋肉痛 : ". $result['pain'] ."\n朝食 : ". $result['breakfast'] .
+      "\n昼食 : ". $result['lunch'] ."\n夕食 : ". $result['dinner'] .
+      "\n筋トレ : ". $result['training'] ."\n健康状態 : ". $result['health'] ."\nメモ : ". $result['memo'];
       return $teststring;
     }
     
