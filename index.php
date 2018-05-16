@@ -98,15 +98,16 @@
       $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ' .$userId ;
       $sth = $dbh->query($sql);
       $result = $sth->fetchAll();
-      error_log("\nfetchAll : " . print_r($result,true));
-      error_log("\narraycolumn ymd : " . print_r(array_column($result,'ymd'),true));
-      error_log("\narraycolumn ymd0 : " . print_r(array_column($result,'ymd')[0],true));
-      $teststring = "日付 : ". array_column($result,'ymd')[0] ."\n体重 : ". array_column($result,'weight') .
-      "\n筋肉量 : ". $result['muscle'] ."\n起床時刻 : ". $result['wakeup'] .
-      "\n入眠時刻 : ". $result['sleep'] ."\nうんちの状態 : ". $result['bencon'].
-      "\n筋肉痛 : ". $result['pain'] ."\n朝食 : ". $result['breakfast'] .
-      "\n昼食 : ". $result['lunch'] ."\n夕食 : ". $result['dinner'] .
-      "\n筋トレ : ". $result['training'] ."\n健康状態 : ". $result['health'] ."\nメモ : ". $result['memo'];
+      //error_log("\nfetchAll : " . print_r($result,true));
+      //error_log("\narraycolumn ymd : " . print_r(array_column($result,'ymd'),true));
+      //error_log("\narraycolumn ymd0 : " . print_r(array_column($result,'ymd')[0],true));
+      $teststring = "日付 : ". array_column($result,'ymd')[0] ."\n体重 : ". array_column($result,'weight')[0] .
+      "\n筋肉量 : ". array_column($result,'muscle')[0] ."\n起床時刻 : ". array_column($result,'wakeup')[0] .
+      "\n入眠時刻 : ". array_column($result,'sleep')[0] ."\nうんちの状態 : ". array_column($result,'bencon')[0].
+      "\n筋肉痛 : ". array_column($result,'pain')[0] ."\n朝食 : ". array_column($result,'breakfast')[0] .
+      "\n昼食 : ". array_column($result,'lunch')[0] ."\n夕食 : ". array_column($result,'dinner')[0] .
+      "\n筋トレ : ". array_column($result,'training')[0] ."\n健康状態 : ". array_column($result,'health')[0] .
+      "\nメモ : ". array_column($result,'memo')[0];
       return $teststring;
     }
     
