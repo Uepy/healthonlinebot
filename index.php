@@ -99,7 +99,9 @@
       $sth = $dbh->query($sql);
       $result = $sth->fetchAll();
       error_log("\nfetchAll : " . print_r($result,true));
-      $teststring = "日付 : ". $result['ymd'] ."\n体重 : ". $result['weight'] .
+      error_log("\narraycolumn ymd : " . print_r(array_column($result,'ymd'),true));
+      error_log("\narraycolumn ymd0 : " . print_r(array_column($result,'ymd')[0],true));
+      $teststring = "日付 : ". array_column($result,'ymd')[0] ."\n体重 : ". array_column($result,'weight') .
       "\n筋肉量 : ". $result['muscle'] ."\n起床時刻 : ". $result['wakeup'] .
       "\n入眠時刻 : ". $result['sleep'] ."\nうんちの状態 : ". $result['bencon'].
       "\n筋肉痛 : ". $result['pain'] ."\n朝食 : ". $result['breakfast'] .
