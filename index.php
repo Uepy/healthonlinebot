@@ -97,12 +97,13 @@
       $dbh = dbConnection::getConnection();
       $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ' .$userId ;
       $sth = $dbh->query($sql);
+      $result = $sth->fetchAll();
       $ymd = array_column($sth->fetchAll(),'ymd');
       $weight = array_column($sth->fetchAll(),'weight');
       $muscle = array_column($sth->fetchAll(),'muscle');
       $wakeup = array_column($sth->fetchAll(),'wakeup');
       $sleep = array_column($sth->fetchAll(),'sleep');
-      error_log("\nfetchAll : " . print_r($sth->fetchAll(),true));
+      error_log("\nfetchAll : " . print_r($result,true));
       error_log("\nymd : " . print_r($ymd,true));
       error_log("\nweight : " . print_r($weight,true));
       error_log("\nmuscle : " . print_r($muscle,true));
