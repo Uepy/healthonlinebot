@@ -98,18 +98,13 @@
       $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ' .$userId ;
       $sth = $dbh->query($sql);
       $result = $sth->fetchAll();
-      $ymd = array_column($sth->fetchAll(),'ymd');
-      $weight = array_column($sth->fetchAll(),'weight');
-      $muscle = array_column($sth->fetchAll(),'muscle');
-      $wakeup = array_column($sth->fetchAll(),'wakeup');
-      $sleep = array_column($sth->fetchAll(),'sleep');
       error_log("\nfetchAll : " . print_r($result,true));
-      error_log("\nymd : " . print_r($ymd,true));
-      error_log("\nweight : " . print_r($weight,true));
-      error_log("\nmuscle : " . print_r($muscle,true));
-      error_log("\nwakeup : " . print_r($wakeup,true));
-      error_log("\nsleep : " . print_r($sleep,true));
-      $teststring = "日付 : ". $ymd[0] ."\n体重 : ". $weight[0] ."\n筋肉量 : ". $muscle[0] ."\n起床時刻 : ". $wakeup[0] ."\n入眠時刻 : ". $sleep[0];
+      $teststring = "日付 : ". $result[ymd] ."\n体重 : ". $result[weight] .
+      "\n筋肉量 : ". $result[muscle] ."\n起床時刻 : ". $result[wakeup] .
+      "\n入眠時刻 : ". $result[sleep] ."\nうんちの状態 : ". $result[bencon].
+      "\n筋肉痛 : ". $result[pain] ."\n朝食 : ". $result[breakfast] .
+      "\n昼食 : ". $result[lunch] ."\n夕食 : ". $result[dinner] .
+      "\n筋トレ : ". $result[training] ."\n健康状態 : ". $result[health] ."\nメモ : ". $result[memo];
       return $teststring;
     }
     
