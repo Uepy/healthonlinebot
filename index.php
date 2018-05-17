@@ -136,7 +136,7 @@
     function setWakeup($userId,$wakeup){
       $dbh = dbConnection::getConnection();
       $sql = 'update ' .$userId.
-      'set wakeup = ? where ymd = ?';
+      ' set wakeup = ? where ymd = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array($wakeup,date('Y-m-d')));
     }
