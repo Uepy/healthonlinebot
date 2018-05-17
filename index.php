@@ -7,6 +7,8 @@
     define('TABLE_USERS_INFO','tbl_users_info');
     
     
+    
+    
     //アクセストークンでCurlHTTPClientをインスタンス化
     $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient(getenv('CHANNEL_ACCESS_TOKEN'));
     
@@ -42,7 +44,29 @@
         // ユーザープロファイルの取得
         $profile = $bot -> getProfile($userId) -> getJSONDecodedBody();
         
-        $bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
+        //$bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
+        
+        switch ($event->getText()) {
+          
+          
+          case 'おはよう' :
+            setWakeup();
+            break;
+            
+          
+          case '体重' :
+            
+            // 
+            $bot->replyText($event->getReplyToken(), getUserName($userId) ."ちゃんの記録\n" .getUserRecord($userId) );
+            break;
+          
+          // どれでもない場合は記録を返す  
+          default:
+            
+            $bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
+            break;
+        }
+        
     }
     
     
@@ -98,6 +122,42 @@
       return $userName[0];
     }
     
+    // 体重をセット
+    function setWeight($userId,$weight){
+      $dbh = dbConnection::getConnection();
+      $sql = 'update ' .$userId.
+      'set weight = ? where ymd = ?';
+      $sth = $dbh->prepare($sql);
+      $sth->execute(array($weight,date('Y-m-d')));
+    }
+    
+    // 体重をセット
+    function setWakeup($userId,$wakeup){
+      $dbh = dbConnection::getConnection();
+      $sql = 'update ' .$userId.
+      'set wakeup = ? where ymd = ?';
+      $sth = $dbh->prepare($sql);
+      $sth->execute(array($wakeup,date('Y-m-d')));
+    }
+    
+    function setInputPhase($userId,$boolInput,$healthType){
+      $dbh = dbConnection::getConnection();
+      $sql = 'update tbl_input_phase set boolInput = ? , healthType = ? 
+      where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
+      $sth = $dbh->prepare($sql);
+      $sth->execute(array($boolInput,$healthType,$userId));
+    }
+    
+    function getBoolInput($userId){
+      $dbh = dbConnection::getConnection();
+      $sql = 'select boolInput from tbl_input_phase  
+      where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
+      $sth = $dbh->prepare($sql);
+      $sth->execute(array($userId));
+      $boolInput = array_column($sth->fetchAll(),'boolInput')[0];
+      return $boolInput;
+    }
+    
     // userId に一致するユーザーの記録を返す
     function getUserRecord($userId){
       $dbh = dbConnection::getConnection();
@@ -117,13 +177,22 @@
       return $teststring;
     }
     
-    // テキストを返信 引数は、LINEbot、返信先、テキストメッセージ
-    function replyImageMessage($bot,$replyToken,$text){
+    // テキストを返信 引数はLINEbot、返信先、テキストメッセージ
+    function replyTextMessage($bot,$replyToken,$text){
       $response = $bot->replyMessage($replyToken,
       new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($text));
       
       if (!$response->isSucceeded()){
-        error_log('failed!' . $response->getHTTPStatus . ' ' . $response->getRawBody());
+        error_log('failed to replyTextMessage' . $response->getHTTPStatus . ' ' . $response->getRawBody());
+      }
+    }
+    
+    // テキストをプッシュ 引数は、LINEbot、ユーザーID、テキストメッセージ
+    function pushTextMassage($bot,$userId,$text){
+      $response = $bot->pushMessage($userId, new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($message));
+      
+      if (!$response->isSucceeded()){
+        error_log('failed to pushTextMassage' . $response->getHTTPStatus . ' ' . $response->getRawBody());
       }
     }
 
