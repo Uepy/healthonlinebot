@@ -50,7 +50,8 @@
           
           
           case 'おはよう' :
-            setWakeup();
+            setWakeup($userId,date('H:i'));
+            replyTextMessage($bot,$event->getReplyToken(),"おはようございます!\n起床時刻が登録されました");
             break;
             
           
