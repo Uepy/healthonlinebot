@@ -127,7 +127,7 @@
     function setWeight($userId,$weight){
       $dbh = dbConnection::getConnection();
       $sql = 'update ' .$userId.
-      'set weight = ? where ymd = ?';
+      ' set weight = ? where ymd = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array($weight,date('Y-m-d')));
     }
@@ -139,6 +139,8 @@
       ' set wakeup = ? where ymd = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array($wakeup,date('Y-m-d')));
+      error_log("\nwakeup : " . print_r($wakeup,true));
+      error_log("\Y-m-d : " . print_r(date('Y-m-d'),true));
     }
     
     function setInputPhase($userId,$boolInput,$healthType){

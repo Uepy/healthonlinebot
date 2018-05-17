@@ -5,6 +5,8 @@ githubにプッシュ
 git add .
 git commit -m "test commit"
 git push -u origin master
+一行よう
+git add . && git commit -m "v2" && git push -u origin master
 
 herokuにデプロイ
 git add .
