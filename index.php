@@ -51,10 +51,16 @@
           
           case 'おはよう' :
             setWakeup($userId,date('H:i'));
-            replyTextMessage($bot,$event->getReplyToken(),"おはようございます!\n起床時刻が登録されました");
+            replyTextMessage($bot,$event->getReplyToken(),"おはようございます！\n起床時刻が登録されました\n今日も一日顔晴りましょう！");
             break;
             
           
+          case 'おやすみ' :
+            setWakeup($userId,date('H:i'));
+            replyTextMessage($bot,$event->getReplyToken(),"おやすみなさい\n就寝時刻が登録されました\n今日も一日お疲れ様でした");
+            break;
+            
+            
           case '体重' :
             
             // 
@@ -132,7 +138,7 @@
       $sth->execute(array($weight,date('Y-m-d')));
     }
     
-    // 体重をセット
+    // 起床時刻をセット
     function setWakeup($userId,$wakeup){
       $dbh = dbConnection::getConnection();
       $sql = 'update ' .$userId.
@@ -140,6 +146,17 @@
       $sth = $dbh->prepare($sql);
       $sth->execute(array($wakeup,date('Y-m-d')));
       error_log("\nwakeup : " . print_r($wakeup,true));
+      error_log("\Y-m-d : " . print_r(date('Y-m-d'),true));
+    }
+    
+    // 起床時刻をセット
+    function setSleep($userId,$sleep){
+      $dbh = dbConnection::getConnection();
+      $sql = 'update ' .$userId.
+      ' set sleep = ? where ymd = ?';
+      $sth = $dbh->prepare($sql);
+      $sth->execute(array($sleep,date('Y-m-d')));
+      error_log("\nsleep : " . print_r($sleep,true));
       error_log("\Y-m-d : " . print_r(date('Y-m-d'),true));
     }
     

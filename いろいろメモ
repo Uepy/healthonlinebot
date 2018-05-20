@@ -13,6 +13,8 @@ git add .
 git commit -m 'deploy!! heroku!'
 git push heroku master
 
+git add . && git commit -m "v2" && git push -u origin master && git push heroku master
+
 kazuki uedaのuserID
 U9a6675ed0946c116097b44bd69024fd4
 kodama userID
