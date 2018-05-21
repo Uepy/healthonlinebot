@@ -45,7 +45,7 @@
     // ##########       改善point !!!     ##########
     function insertNewDay(){
         $dbh = dbConnection::getConnection();
-        $sql = 'insert into U9a6675ed0946c116097b44bd69024fd5 (ymd) values ( ? ) ' ;
+        $sql = 'insert into U9a6675ed0946c116097b44bd69024fd4 (ymd) values ( ? ) ' ;
         $sth = $dbh->prepare($sql);
         $sth->execute(array(date('Y-m-d')));
     }
