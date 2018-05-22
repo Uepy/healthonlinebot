@@ -221,11 +221,11 @@
     function getBoolInput($userId){
       $dbh = dbConnection::getConnection();
       error_log("\ncalled getBoolInput");
-      $sql = 'select boolinput from tbl_input_phase  
+      $sql = 'select boolinput from tbl_input_phase 
       where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array($userId));
-      $boolInput = array_column($sth->fetchAll(),'boolInput');
+      $boolInput = array_column($sth->fetchAll(),'boolinput');
       if($boolInput[0] == 1){
         error_log("\nboolInput : true");
         return true ;
