@@ -204,7 +204,6 @@
         $sql = 'update tbl_input_phase set boolInput = ? 
         where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
         error_log("\nboolInput : " . print_r($boolInput,true));
-        error_log("\nhealthType : " . print_r($healthType,true));
         $sth = $dbh->prepare($sql);
         $sth->execute(array($boolInput,$userId));
       }else{
@@ -222,12 +221,12 @@
     function getBoolInput($userId){
       $dbh = dbConnection::getConnection();
       error_log("\ncalled getBoolInput");
-      $sql = 'select boolInput from tbl_input_phase  
+      $sql = 'select boolinput from tbl_input_phase  
       where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array($userId));
-      $boolInput = array_column($sth->fetchAll(),'boolInput')[0];
-      if($boolInput == 1){
+      $boolInput = array_column($sth->fetchAll(),'boolInput');
+      if($boolInput[0] == 1){
         error_log("\nboolInput : true");
         return true ;
       }else{
