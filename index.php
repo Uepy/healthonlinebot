@@ -177,8 +177,8 @@
       ' set wakeup = ? where ymd = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array($wakeup,date('Y-m-d')));
-      error_log("\ndata : " . print_r($data,true));
-      error_log("\ndata : " . print_r($data,true));
+      error_log("\nwakeup : " . print_r($wakeup,true));
+      error_log("\nY-m-d : " . print_r(date('Y-m-d'),true));
     }
     
     // データをセット
@@ -208,7 +208,7 @@
         $sth->execute(array($boolInput,$userId));
       }else{
         error_log("\nupdate both boolInput and healthType");
-        $sql = 'update tbl_input_phase set boolInput = ? , healthType = ? 
+        $sql = 'update tbl_input_phase set boolInput = ? , dataType = ? 
         where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
         error_log("\nboolInput : " . print_r($boolInput,true));
         error_log("\nhealthType : " . print_r($healthType,true));
@@ -233,11 +233,11 @@
     function getHealthTypeFromInputPhase($userId){
       error_log("\ncalled getHealthTypeFromInputPhase");
       $dbh = dbConnection::getConnection();
-      $sql = 'select healthType from tbl_input_phase  
+      $sql = 'select dataType from tbl_input_phase  
       where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array($userId));
-      $healthType = array_column($sth->fetchAll(),'boolInput')[0];
+      $healthType = array_column($sth->fetchAll(),'datatype')[0];
       
       error_log("\nhealthType : " . print_r($healthType,true));
       return $healthType;
@@ -246,7 +246,7 @@
     // userId に一致するユーザーの記録を返す
     function getUserRecord($userId){
       $dbh = dbConnection::getConnection();
-      $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ' .$userId ;
+      $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ' .$userId .'where ymd = '.date('Y-m-d');
       $sth = $dbh->query($sql);
       $result = $sth->fetchAll();
       //error_log("\nfetchAll : " . print_r($result,true));
