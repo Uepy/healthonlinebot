@@ -187,13 +187,13 @@
     function setHealthData($userId,$data,$healthType){
       $dbh = dbConnection::getConnection();
       $sql = 'update ' .$userId.
-      ' set ? = ? where ymd = ?';
+      ' set ' .$healthType.' = ' .$data. ' where ymd = ?';
       $sth = $dbh->prepare($sql);
       error_log("\ncalled setHealthData");
       error_log("\ndata : " . print_r($data,true));
       error_log("\nhealthType : " . print_r($healthType,true));
       error_log("\Y-m-d : " . print_r(date('Y-m-d'),true));
-      $sth->execute(array($healthType,$data,date('Y-m-d')));
+      $sth->execute(array(date('Y-m-d')));
     }
     
     function setInputPhase($userId,$boolInput,$healthType){
