@@ -70,7 +70,7 @@
             
         
         //PostbackイベントじゃなくInputPaseがtrueの場合
-        }else if(getBoolInput()){
+        }else if(getBoolInput($userId)){
           setHealthData($userId,$event->getText(),getHealthTypeFromInputPhase());
           $bot->replyText($event->getReplyToken(), "データを記録しました！\nありがとうございます！！");
         //Postbackイベントじゃなかった場合  
