@@ -89,7 +89,7 @@
           case '体重' :
             
             setInputPhase($userId,'false','weight');
-            replyConfirmTemplate($bot,$bot, $event->getReplyToken(),
+            replyConfirmTemplate($bot, $event->getReplyToken(),
             '体重を入力します','体重を入力します',
             new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK'),
             new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('いいえ','cmd_cancel'));
@@ -100,11 +100,11 @@
           case 'メモ' :
             
             setInputPhase($userId,'false','memo');
-            replyConfirmTemplate($bot,$bot, $event->getReplyToken(),
-            'メモを入力します','メモを入力します',[
+            replyConfirmTemplate($bot, $event->getReplyToken(),
+            'メモを入力します','メモを入力します',
             new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK'),
             new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('いいえ','cmd_cancel')
-            ]);
+            );
             
             
             break;  
