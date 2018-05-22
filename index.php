@@ -60,7 +60,7 @@
             
           case 'cmd_OK':
             setInputPhase($userId,'true','');
-            $bot->replyText($event->getReplyToken(), "データを入力してください");
+            $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを入力してください");
             break;
             
           default :
@@ -69,10 +69,11 @@
         }
             
         
-        //PostbackイベントじゃなくInputPaseがtrueの場合
+        // InputPaseがtrueの場合
+        // cmd_OK が押されると、inputPhaseがtrueになるのでここに遷移します
         }else if(getBoolInput($userId)){
           setHealthData($userId,$event->getText(),getHealthTypeFromInputPhase($userId));
-          $bot->replyText($event->getReplyToken(), "データを記録しました！\nありがとうございます！！");
+          $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
           setInputPhase($userId,'false','');
           
           
@@ -92,55 +93,55 @@
           case $typeJap = '体重' :
             
             setInputPhase($userId,'false','weight');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'weight');
             break;
             
           case $typeJap = '筋肉量' :
             
             setInputPhase($userId,'false','muscle');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'muscle');
             break;
           
           case $typeJap = '朝食' :
             
             setInputPhase($userId,'false','breakfast');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'breakfast');
             break;
           
           case $typeJap = '昼食' :
             
             setInputPhase($userId,'false','lunch');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'lunch');
             break;
           
           case $typeJap = '夕食' :
             
             setInputPhase($userId,'false','dinner');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'dinner');
             break;
           
           case $typeJap = 'うんち' :
             
-            setInputPhase($userId,'false','bencon');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            setInputPhase($userId,'false','shit');
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'shit');
             break;
             
           case $typeJap = '筋肉痛' :
             
             setInputPhase($userId,'false','pain');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'pain');
             break;
             
           case $typeJap = '体調' :
             
             setInputPhase($userId,'false','health');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'health');
             break;
             
           case $typeJap = '筋トレ' :
             
             setInputPhase($userId,'false','training');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'memo');
             break;
             
 
@@ -148,7 +149,7 @@
           case $typeJap = 'メモ' :
             
             setInputPhase($userId,'false','memo');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'memo');
             break;  
           
           // どれでもない場合は記録を返す  
@@ -200,7 +201,51 @@
         
     }
     
-    
+    function convertHealthType2Jap($healthType){
+      switch($healthType){
+        case 'weight': return '体重';
+          break;
+          
+        case 'muscle': return '筋肉量';
+          break;
+        
+        case 'wakeup': return '起床時刻';
+          break;
+        
+        case 'sleep': return '就寝時刻';
+          break;
+        
+        case 'shit': return 'うんちの状態';
+          break;
+        
+        case 'pain': return '筋肉痛';
+          break;
+        
+        case 'breakfast': return '朝食';
+          break;
+        
+        case 'lunch': return '昼食';
+          break;
+        
+        case 'dinner': return '夕食';
+          break;
+        
+        case 'training': return '筋トレ';
+          break;
+        
+        case 'health': return '体調';
+          break;
+        
+        case 'memo': return 'メモ';
+          break;
+          
+        default :
+          error_log("\nfailed in convertHealthType2Jap \nrequired healthType didn't match anything.");
+          return '';
+          break;
+          
+      }
+    }
     
     // TABLE_USERS_INFO の名前を返す
     function getUserName($userId){
@@ -303,7 +348,7 @@
       //error_log("\narraycolumn ymd0 : " . print_r(array_column($result,'ymd')[0],true));
       $teststring = "日付 : ". array_column($result,'ymd')[0] ."\n体重 : ". array_column($result,'weight')[0] .
       "\n筋肉量 : ". array_column($result,'muscle')[0] ."\n起床時刻 : ". array_column($result,'wakeup')[0] .
-      "\n就寝時刻 : ". array_column($result,'sleep')[0] ."\nうんちの状態 : ". array_column($result,'bencon')[0].
+      "\n就寝時刻 : ". array_column($result,'sleep')[0] ."\nうんちの状態 : ". array_column($result,'shit')[0].
       "\n筋肉痛 : ". array_column($result,'pain')[0] ."\n朝食 : ". array_column($result,'breakfast')[0] .
       "\n昼食 : ". array_column($result,'lunch')[0] ."\n夕食 : ". array_column($result,'dinner')[0] .
       "\n筋トレ : ". array_column($result,'training')[0] ."\n健康状態 : ". array_column($result,'health')[0] .
@@ -366,10 +411,10 @@
       }
     }
     
-    function replyInputConfirm($bot,$replyToken,$typeJap){
+    function replyInputConfirm($bot,$replyToken,$typeJap,$type){
       replyConfirmTemplate($bot,$replyToken,
       $typeJap. 'を入力します', $typeJap. 'を入力します',
-            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK'),
+            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK_'.$type.'_'.$typeJap),
             new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('いいえ','cmd_cancel'));
     }
 

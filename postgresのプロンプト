@@ -34,6 +34,7 @@ insert into tbl_users_info (userid,height) values (pgp_sym_encrypt('U9a6675ed094
 insert into tbl_users_info (userid,height) values (pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd6','smiletobehealth'),160.23);
 insert into tbl_users_info (userid,height) values (pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd7','smiletobehealth'),60.238);
 
+    
 create table U9a6675ed0946c116097b44bd69024fd4(
     -- 日付
     ymd date unique,
@@ -46,59 +47,23 @@ create table U9a6675ed0946c116097b44bd69024fd4(
     -- 入眠時刻
     sleep time,
     -- 便の状態
-    bencon mood[],
+    shit smallint check (shit > 0 and shit < 4),
     -- 排便時刻
-    bentime time[],
+    shit_time time[],
     -- 筋肉痛具合
-    pain mood,
+    pain smallint check (pain > 0 and pain < 4),
     -- 朝食 
     breakfast varchar(50),
     -- 朝食時刻 
-    btime time,
+    breakfast_time time,
     -- 昼食
     lunch varchar(50),
     -- 昼食時刻 
-    ltime time,
+    lunch_time time,
     -- 夕食
     dinner varchar(50),
     -- 夕食時刻 
-    dtime time,
-    -- 筋トレ
-    training boolean,
-    -- 体調
-    health boolean,
-    -- メモ
-    memo varchar(50) ) ;
-    
-create table testuser(
-    -- 日付
-    ymd date unique,
-    -- 体重
-    weight decimal(4,1),
-    -- 筋肉量
-    muscle decimal(4,1),
-    -- 起床時刻
-    wakeup time,
-    -- 入眠時刻
-    sleep time,
-    -- 便の状態
-    bencon mood[],
-    -- 排便時刻
-    bentime time[],
-    -- 筋肉痛具合
-    pain mood,
-    -- 朝食 
-    breakfast varchar(50),
-    -- 朝食時刻 
-    btime time,
-    -- 昼食
-    lunch varchar(50),
-    -- 昼食時刻 
-    ltime time,
-    -- 夕食
-    dinner varchar(50),
-    -- 夕食時刻 
-    dtime time,
+    dinner_time time,
     -- 筋トレ
     training boolean,
     -- 体調
@@ -118,15 +83,15 @@ insert into testuser (ymd, bencon , bentime) values ('2018-05-22','{good,best,ba
 
 
 -- tbl_input_phase で使うenum型のタイプ設定
-CREATE TYPE healthType AS ENUM ('weight','muscle','wakeup','sleep','bencon','pain','breakfast','lunch','dinner','training','health','memo');
+CREATE TYPE healthtype AS ENUM ('weight','muscle','wakeup','sleep','shit','pain','breakfast','lunch','dinner','training','health','memo');
 
 -- 入力待ち状態なのかどうかを管理するテーブル
 create table tbl_input_phase(
     userid bytea primary key,
-    boolInput boolean,
-    dataType healthType);
+    boolinput boolean,
+    datatype healthtype);
     
-insert into tbl_input_phase (userid) values (pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd5','smiletobehealth'));
+insert into tbl_input_phase (userid) values (pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd4','smiletobehealth'));
 
 -- where句でencryptしたもの同士を比較するのは出来ないらしい だからこれはだめ
 update tbl_input_phase set boolInput = true, dataType = 'weight' where userid = pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd4','smiletobehealth');
@@ -145,6 +110,7 @@ select pgp_sym_decrypt(userid,'smiletobehealth') from tbl_input_phase where bool
 insert into tbl_input_phase (userid,boolInput,dataType) values (pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd4','smiletobehealth'),false,'bencon');
 
 update tbl_input_phase set boolInput = true, dataType = 'wakeup' where pgp_sym_decrypt(userid,'smiletobehealth') = 'U9a6675ed0946c116097b44bd69024fd4';
+select boolinput from tbl_input_phase where (pgp_sym_decrypt(userid,'smiletobehealth')) = 'U9a6675ed0946c116097b44bd69024fd4';
 
-create table pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd5','smiletobehealth') (
+create table pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd4','smiletobehealth') (
     unko varchar(30) );
