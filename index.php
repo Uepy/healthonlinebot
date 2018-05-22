@@ -221,14 +221,19 @@
     
     function getBoolInput($userId){
       $dbh = dbConnection::getConnection();
+      error_log("\ncalled getBoolInput");
       $sql = 'select boolInput from tbl_input_phase  
       where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array($userId));
       $boolInput = array_column($sth->fetchAll(),'boolInput')[0];
-      error_log("\ncalled getBoolInput");
-      error_log("\nboolInput : " . print_r($boolInput,true));
-      return $boolInput;
+      if($boolInput == 1){
+        error_log("\nboolInput : true");
+        return true ;
+      }else{
+        error_log("\nboolInput : false");
+        return false;
+      }
     }
     
     function getHealthTypeFromInputPhase($userId){
