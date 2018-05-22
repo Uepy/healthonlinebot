@@ -338,7 +338,7 @@
     // userId に一致するユーザーの記録を返す
     function getUserRecord($userId){
       $dbh = dbConnection::getConnection();
-      $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ' .$userId .' where ymd = ?';
+      $sql = 'select ymd,weight,muscle,wakeup,sleep,shit,pain,breakfast,lunch,dinner,training,health,memo from ' .$userId .' where ymd = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array(date('Y-m-d')));
       //$sth = $dbh->query($sql);
@@ -414,7 +414,7 @@
     function replyInputConfirm($bot,$replyToken,$typeJap,$type){
       replyConfirmTemplate($bot,$replyToken,
       $typeJap. 'を入力します', $typeJap. 'を入力します',
-            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK_'.$type.'_'.$typeJap),
+            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK'),
             new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('いいえ','cmd_cancel'));
     }
 
