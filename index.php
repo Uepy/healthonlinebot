@@ -89,27 +89,66 @@
             break;
             
           
-          case '体重' :
+          case $typeJap = '体重' :
             
             setInputPhase($userId,'false','weight');
-            replyConfirmTemplate($bot, $event->getReplyToken(),
-            '体重を入力します','体重を入力します',
-            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK'),
-            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('いいえ','cmd_cancel'));
-            
-            
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
             break;
             
-          case 'メモ' :
+          case $typeJap = '筋肉量' :
+            
+            setInputPhase($userId,'false','muscle');
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            break;
+          
+          case $typeJap = '朝食' :
+            
+            setInputPhase($userId,'false','breakfast');
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            break;
+          
+          case $typeJap = '昼食' :
+            
+            setInputPhase($userId,'false','lunch');
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            break;
+          
+          case $typeJap = '夕食' :
+            
+            setInputPhase($userId,'false','dinner');
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            break;
+          
+          case $typeJap = 'うんち' :
+            
+            setInputPhase($userId,'false','bencon');
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            break;
+            
+          case $typeJap = '筋肉痛' :
+            
+            setInputPhase($userId,'false','pain');
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            break;
+            
+          case $typeJap = '体調' :
+            
+            setInputPhase($userId,'false','health');
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            break;
+            
+          case $typeJap = '筋トレ' :
+            
+            setInputPhase($userId,'false','training');
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
+            break;
+            
+
+          
+          case $typeJap = 'メモ' :
             
             setInputPhase($userId,'false','memo');
-            replyConfirmTemplate($bot, $event->getReplyToken(),
-            'メモを入力します','メモを入力します',
-            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK'),
-            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('いいえ','cmd_cancel')
-            );
-            
-            
+            replyInputConfirm($bot,$event->getReplyToken(),$typeJap);
             break;  
           
           // どれでもない場合は記録を返す  
@@ -264,7 +303,7 @@
       //error_log("\narraycolumn ymd0 : " . print_r(array_column($result,'ymd')[0],true));
       $teststring = "日付 : ". array_column($result,'ymd')[0] ."\n体重 : ". array_column($result,'weight')[0] .
       "\n筋肉量 : ". array_column($result,'muscle')[0] ."\n起床時刻 : ". array_column($result,'wakeup')[0] .
-      "\n入眠時刻 : ". array_column($result,'sleep')[0] ."\nうんちの状態 : ". array_column($result,'bencon')[0].
+      "\n就寝時刻 : ". array_column($result,'sleep')[0] ."\nうんちの状態 : ". array_column($result,'bencon')[0].
       "\n筋肉痛 : ". array_column($result,'pain')[0] ."\n朝食 : ". array_column($result,'breakfast')[0] .
       "\n昼食 : ". array_column($result,'lunch')[0] ."\n夕食 : ". array_column($result,'dinner')[0] .
       "\n筋トレ : ". array_column($result,'training')[0] ."\n健康状態 : ". array_column($result,'health')[0] .
@@ -325,6 +364,13 @@
       if(!$response->isSucceeded()){
         error_log('failed to push confirm button' . $response->getHTTPStatus . ' ' . $response->getRawBody());
       }
+    }
+    
+    function replyInputConfirm($bot,$replyToken,$typeJap){
+      replyConfirmTemplate($bot,$replyToken,
+      $typeJap. 'を入力します', $typeJap. 'を入力します',
+            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK'),
+            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('いいえ','cmd_cancel'));
     }
 
 
