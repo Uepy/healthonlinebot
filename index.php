@@ -177,6 +177,8 @@
       ' set wakeup = ? where ymd = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array($wakeup,date('Y-m-d')));
+      error_log("\ndata : " . print_r($data,true));
+      error_log("\ndata : " . print_r($data,true));
     }
     
     // データをセット
@@ -196,20 +198,24 @@
     function setInputPhase($userId,$boolInput,$healthType){
       error_log("\ncalled setInputPhase ");
       $dbh = dbConnection::getConnection();
-      if(strcmp($healthType,'')){
+      if(!$healthType){
         error_log("\nupdate only boolInput");
         $sql = 'update tbl_input_phase set boolInput = ? 
         where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
+        error_log("\nboolInput : " . print_r($boolInput,true));
+        error_log("\nhealthType : " . print_r($healthType,true));
+        $sth = $dbh->prepare($sql);
+        $sth->execute(array($boolInput,$userId));
       }else{
         error_log("\nupdate both boolInput and healthType");
         $sql = 'update tbl_input_phase set boolInput = ? , healthType = ? 
         where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
+        error_log("\nboolInput : " . print_r($boolInput,true));
+        error_log("\nhealthType : " . print_r($healthType,true));
+        $sth = $dbh->prepare($sql);
+        $sth->execute(array($boolInput,$healthType,$userId));
       }
-      
-      error_log("\nboolInput : " . print_r($boolInput,true));
-      error_log("\nhealthType : " . print_r($healthType,true));
-      $sth = $dbh->prepare($sql);
-      $sth->execute(array($boolInput,$healthType,$userId));
+
     }
     
     function getBoolInput($userId){
