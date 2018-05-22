@@ -53,13 +53,13 @@
         switch ($event->getPostbackData()) {
       
           case 'cmd_cancel':
-            setInputPhase($userId,false,'');
+            setInputPhase($userId,'false','');
             $bot->replyText($event->getReplyToken(), "入力はキャンセルされました。");
             break;
             
             
           case 'cmd_OK':
-            setInputPhase($userId,true,'');
+            setInputPhase($userId,'true','');
             $bot->replyText($event->getReplyToken(), "データを入力してください");
             break;
             
@@ -88,7 +88,7 @@
           
           case '体重' :
             
-            setInputPhase($userId,false,'weight');
+            setInputPhase($userId,'false','weight');
             replyConfirmTemplate($bot,$bot, $event->getReplyToken(),
             '体重を入力します','体重を入力します',
             new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK'),
@@ -99,7 +99,7 @@
             
           case 'メモ' :
             
-            setInputPhase($userId,false,'memo');
+            setInputPhase($userId,'false','memo');
             replyConfirmTemplate($bot,$bot, $event->getReplyToken(),
             'メモを入力します','メモを入力します',
             new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK'),
@@ -246,7 +246,7 @@
     // userId に一致するユーザーの記録を返す
     function getUserRecord($userId){
       $dbh = dbConnection::getConnection();
-      $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ' .$userId .'where ymd = '.date('Y-m-d');
+      $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ' .$userId .' where ymd = '.date('Y-m-d');
       $sth = $dbh->query($sql);
       $result = $sth->fetchAll();
       //error_log("\nfetchAll : " . print_r($result,true));
