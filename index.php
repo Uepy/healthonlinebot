@@ -46,26 +46,67 @@
         
         //$bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
         
+        
+        //Postbackイベントの場合
+        if($event instanceof \LINE\LINEBot\Event\PostbackEvent){
+          
+        switch ($event->getPostbackData()) {
+      
+          case 'cmd_cancel':
+            setInputPhase($userId,false,'');
+            $bot->replyText($event->getReplyToken(), "入力はキャンセルされました。");
+            break;
+            
+            
+          case 'cmd_OK':
+            setInputPhase($userId,true,'');
+            $bot->replyText($event->getReplyToken(), "データを入力してください");
+            break;
+            
+          default :
+            $bot->replyText($event->getReplyToken(), "不正な入力が行われたかもしれません\n申し訳ございません");
+            break;
+        }
+            
+        
+        //PostbackイベントじゃなくInputPaseがtrueの場合
+        }else if(getBoolInput){
+          setHealthData($userId,$event->getText(),getHealthTypeFromInputPhase());
+          $bot->replyText($event->getReplyToken(), "データを記録しました！\nありがとうございます！！");
+        //Postbackイベントじゃなかった場合  
+        }else
+        
+        
         switch ($event->getText()) {
           
           
           case 'おはよう' :
             setWakeup($userId,date('H:i'));
-            replyTextMessage($bot,$event->getReplyToken(),"おはようございます！\n起床時刻が登録されました\n今日も一日顔晴りましょう！");
+            replyTextMessage($bot,$event->getReplyToken(),"おはようございます!\n起床時刻が登録されました");
             break;
             
           
-          case 'おやすみ' :
-            setSleep($userId,date('H:i'));
-            replyTextMessage($bot,$event->getReplyToken(),"おやすみなさい\n就寝時刻が登録されました\n今日も一日お疲れ様でした");
-            break;
-            
-            
           case '体重' :
             
-            // 
-            $bot->replyText($event->getReplyToken(), getUserName($userId) ."ちゃんの記録\n" .getUserRecord($userId) );
+            setInputPhase($userId,false,'weight');
+            replyConfirmTemplate($bot,$bot, $event->getReplyToken(),
+            '体重を入力します','体重を入力します',
+            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK'),
+            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('いいえ','cmd_cancel'));
+            
+            
             break;
+            
+          case 'メモ' :
+            
+            setInputPhase($userId,false,'memo');
+            replyConfirmTemplate($bot,$bot, $event->getReplyToken(),
+            'メモを入力します','メモを入力します',
+            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK'),
+            new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('いいえ','cmd_cancel'));
+            
+            
+            break;  
           
           // どれでもない場合は記録を返す  
           default:
@@ -129,15 +170,6 @@
       return $userName[0];
     }
     
-    // 体重をセット
-    function setWeight($userId,$weight){
-      $dbh = dbConnection::getConnection();
-      $sql = 'update ' .$userId.
-      ' set weight = ? where ymd = ?';
-      $sth = $dbh->prepare($sql);
-      $sth->execute(array($weight,date('Y-m-d')));
-    }
-    
     // 起床時刻をセット
     function setWakeup($userId,$wakeup){
       $dbh = dbConnection::getConnection();
@@ -145,25 +177,37 @@
       ' set wakeup = ? where ymd = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array($wakeup,date('Y-m-d')));
-      error_log("\nwakeup : " . print_r($wakeup,true));
-      error_log("\Y-m-d : " . print_r(date('Y-m-d'),true));
     }
     
-    // 起床時刻をセット
-    function setSleep($userId,$sleep){
+    // データをセット
+    // 引数はユーザーID、入力するデータ、データを入力するフィールド
+    function setHealthData($userId,$data,$healthType){
       $dbh = dbConnection::getConnection();
       $sql = 'update ' .$userId.
-      ' set sleep = ? where ymd = ?';
+      ' set ? = ? where ymd = ?';
       $sth = $dbh->prepare($sql);
-      $sth->execute(array($sleep,date('Y-m-d')));
-      error_log("\nsleep : " . print_r($sleep,true));
+      $sth->execute(array($healthType,$data,date('Y-m-d')));
+      error_log("\ncalled setHealthData");
+      error_log("\ndata : " . print_r($data,true));
+      error_log("\nhealthType : " . print_r($healthType,true));
       error_log("\Y-m-d : " . print_r(date('Y-m-d'),true));
     }
     
     function setInputPhase($userId,$boolInput,$healthType){
+      error_log("\ncalled setInputPhase ");
       $dbh = dbConnection::getConnection();
-      $sql = 'update tbl_input_phase set boolInput = ? , healthType = ? 
-      where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
+      if(strcmp($healthType,'')){
+        error_log("\nupdate only boolInput");
+        $sql = 'update tbl_input_phase set boolInput = ? 
+        where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
+      }else{
+        error_log("\nupdate both boolInput and healthType");
+        $sql = 'update tbl_input_phase set boolInput = ? , healthType = ? 
+        where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
+      }
+      
+      error_log("\nboolInput : " . print_r($boolInput,true));
+      error_log("\nhealthType : " . print_r($healthType,true));
       $sth = $dbh->prepare($sql);
       $sth->execute(array($boolInput,$healthType,$userId));
     }
@@ -175,15 +219,29 @@
       $sth = $dbh->prepare($sql);
       $sth->execute(array($userId));
       $boolInput = array_column($sth->fetchAll(),'boolInput')[0];
+      error_log("\ncalled getBoolInput");
+      error_log("\nboolInput : " . print_r($boolInput,true));
       return $boolInput;
+    }
+    
+    function getHealthTypeFromInputPhase($userId){
+      error_log("\ncalled getHealthTypeFromInputPhase");
+      $dbh = dbConnection::getConnection();
+      $sql = 'select healthType from tbl_input_phase  
+      where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
+      $sth = $dbh->prepare($sql);
+      $sth->execute(array($userId));
+      $healthType = array_column($sth->fetchAll(),'boolInput')[0];
+      
+      error_log("\nhealthType : " . print_r($healthType,true));
+      return $healthType;
     }
     
     // userId に一致するユーザーの記録を返す
     function getUserRecord($userId){
       $dbh = dbConnection::getConnection();
-      $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ' .$userId  .' where ymd = ?';
-      $sth = $dbh->prepare($sql);
-      $sth->execute(array(date('Y-m-d')));
+      $sql = 'select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from ' .$userId ;
+      $sth = $dbh->query($sql);
       $result = $sth->fetchAll();
       //error_log("\nfetchAll : " . print_r($result,true));
       //error_log("\narraycolumn ymd : " . print_r(array_column($result,'ymd'),true));
@@ -216,5 +274,42 @@
         error_log('failed to pushTextMassage' . $response->getHTTPStatus . ' ' . $response->getRawBody());
       }
     }
+    
+    
+    // buttons テンプレート アクション引数が配列版
+    // Buttons テンプレートを返信 
+    // 引数(LINEBot,返信先,代替テキスト,画像URL,タイトル,本文,アクション配列)
+    function replyButtonsTemplate($bot,$replyToken,$alterText,$imageUrl,$title,$text,$actionArray){
+    
+      // TemplateMessageBuilderの引数(代替テキスト,ButtonTemplateBuilder)
+      $builder = new \LINE\LINEBot\MessageBuilder\TemplateMessageBuilder($alterText,
+      // ButtonTemplateBuilderの引数(タイトル,本文,画像URL,アクション配列)
+      new \LINE\LINEBot\MessageBuilder\TemplateBuilder\ButtonTemplateBuilder(
+        $title,$text,$imageUrl,$actionArray));
+        
+      $response = $bot -> replyMessage($replyToken,$builder);
+      if(!$response->isSucceeded()){
+        error_log('failed to push buttons' . $response->getHTTPStatus . ' ' . $response->getRawBody());
+      }
+    }
+    
+    // Confirm テンプレートを返信 
+    // 引数(LINEBot,返信先,代替テキスト,本文,可変長アクション配列)
+    function replyConfirmTemplate($bot,$replyToken,$alterText,$text,...$actions){
+      $actionArray = array();
+      foreach($actions as $value){
+        array_push($actionArray,$value);
+      }
+      // TemplateMessageBuilderの引数(代替テキスト,ButtonTemplateBuilder)
+      $builder = new \LINE\LINEBot\MessageBuilder\TemplateMessageBuilder($alterText,
+      new \LINE\LINEBot\MessageBuilder\TemplateBuilder\ConfirmTemplateBuilder(
+        $text,$actionArray));
+      
+      $response = $bot -> replyMessage($replyToken,$builder);
+      if(!$response->isSucceeded()){
+        error_log('failed to push confirm button' . $response->getHTTPStatus . ' ' . $response->getRawBody());
+      }
+    }
+
 
  ?>

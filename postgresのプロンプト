@@ -46,15 +46,59 @@ create table U9a6675ed0946c116097b44bd69024fd4(
     -- 入眠時刻
     sleep time,
     -- 便の状態
-    bencon smallserial default null,
+    bencon mood[],
+    -- 排便時刻
+    bentime time[],
     -- 筋肉痛具合
-    pain smallserial,
+    pain mood,
     -- 朝食 
     breakfast varchar(50),
+    -- 朝食時刻 
+    btime time,
     -- 昼食
     lunch varchar(50),
+    -- 昼食時刻 
+    ltime time,
     -- 夕食
     dinner varchar(50),
+    -- 夕食時刻 
+    dtime time,
+    -- 筋トレ
+    training boolean,
+    -- 体調
+    health boolean,
+    -- メモ
+    memo varchar(50) ) ;
+    
+create table testuser(
+    -- 日付
+    ymd date unique,
+    -- 体重
+    weight decimal(4,1),
+    -- 筋肉量
+    muscle decimal(4,1),
+    -- 起床時刻
+    wakeup time,
+    -- 入眠時刻
+    sleep time,
+    -- 便の状態
+    bencon mood[],
+    -- 排便時刻
+    bentime time[],
+    -- 筋肉痛具合
+    pain mood,
+    -- 朝食 
+    breakfast varchar(50),
+    -- 朝食時刻 
+    btime time,
+    -- 昼食
+    lunch varchar(50),
+    -- 昼食時刻 
+    ltime time,
+    -- 夕食
+    dinner varchar(50),
+    -- 夕食時刻 
+    dtime time,
     -- 筋トレ
     training boolean,
     -- 体調
@@ -67,7 +111,9 @@ insert into U9a6675ed0946c116097b44bd69024fd4 (ymd,weight,muscle,wakeup,sleep,be
     
 select ymd,weight,muscle,wakeup,sleep,bencon,pain,breakfast,lunch,dinner,training,health,memo from U9a6675ed0946c116097b44bd69024fd4;
 
-insert into U9a6675ed0946c116097b44bd69024fd4 (ymd) values ('2018-05-20');
+insert into U9a6675ed0946c116097b44bd69024fd4 (ymd) values ('2017-05-22');
+
+insert into testuser (ymd, bencon , bentime) values ('2018-05-22','{good,best,bad}','{07:00,12:45,21:38}');
 
 
 
@@ -100,8 +146,5 @@ insert into tbl_input_phase (userid,boolInput,dataType) values (pgp_sym_encrypt(
 
 update tbl_input_phase set boolInput = true, dataType = 'wakeup' where pgp_sym_decrypt(userid,'smiletobehealth') = 'U9a6675ed0946c116097b44bd69024fd5';
 
--- テーブル名を暗号化することはできませんでした
-create table pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd4','smiletobehealth') (
+create table pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd5','smiletobehealth') (
     unko varchar(30) );
-    
-update U9a6675ed0946c116097b44bd69024fd4 set wakeup = '9:00' where ymd = '2018-05-20';
