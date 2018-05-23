@@ -277,8 +277,8 @@
         case 'うんちの状態' :case 'うんち' :case 'うんこ': return 'shit'; break; 
         case 'うんちの時刻' : return 'shit_time'; break; 
         case '筋肉痛' : return 'pain'; break; 
-        case '朝食' : return 'hogehogefast'; break; 
-        case '朝食の時刻' : return 'hogehogefast_time'; break; 
+        case '朝食' : return 'breakfast'; break; 
+        case '朝食の時刻' : return 'breakfast_time'; break; 
         case '昼食' : return 'lunch'; break; 
         case '昼食の時刻' : return 'lunch_time'; break; 
         case '夕食' : return 'dinner'; break; 
