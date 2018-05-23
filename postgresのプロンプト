@@ -66,7 +66,7 @@ create table U9a6675ed0946c116097b44bd69024fd4(
     -- 夕食時刻 
     dinner_time time,
     -- 筋トレ
-    training boolean,
+    training boolean default false,
     -- 体調
     health boolean,
     -- メモ
@@ -78,12 +78,13 @@ insert into U9a6675ed0946c116097b44bd69024fd4 (ymd,weight,muscle,wakeup,sleep,be
 select ymd,weight,muscle,wakeup,sleep,shit,pain,breakfast,lunch,dinner,training,health,memo from U9a6675ed0946c116097b44bd69024fd4;
 select * from U9a6675ed0946c116097b44bd69024fd4;
 
-select shit_time from U9a6675ed0946c116097b44bd69024fd4 where ymd = '2018-05-22';
+select shit_time from U9a6675ed0946c116097b44bd69024fd4 where ymd = '2018-05-23';
 select shit from U9a6675ed0946c116097b44bd69024fd4 where ymd = '2018-05-23';
 update U9a6675ed0946c116097b44bd69024fd4 set shit_time = array_append(shit_time,'07:00') where ymd = '2018-05-22';
 update U9a6675ed0946c116097b44bd69024fd4 set shit_time = array_append(shit_time,'13:46') where ymd = '2018-05-22';
 
-select shit from U9a6675ed0946c116097b44bd69024fd4 where ymd = '2018-05-22';
+select weight from U9a6675ed0946c116097b44bd69024fd4 where ymd = '2018-05-22';
+-- 肩が配列じゃないやつにarray_append使おうとおもったけど無理でした(当たり前)
 update U9a6675ed0946c116097b44bd69024fd4 set weight = array_append(weight,55) where ymd = '2018-05-22';
 
 insert into U9a6675ed0946c116097b44bd69024fd4 (ymd) values ('2018-05-22');

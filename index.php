@@ -52,7 +52,7 @@
         
         if(getBoolInput($userId) && ctype_digit(substr($event->getPostbackData(),-1))){
           setHealthData($userId,substr($event->getPostbackData(),-1),getHealthTypeFromInputPhase($userId));
-          $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
+          $bot->replyText($event->getReplyToken(), switchHealthTypeLanguage(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
           setInputPhase($userId,'false','');
         }
         
@@ -113,15 +113,24 @@
       }else
       
       
-      switch ($event->getText()) {
+      switch (switchHealthTypeLanguage($event->getText())) {
         
         
-        case 'おはよう' :
-          setWakeup($userId,date('H:i'));
-          replyTextMessage($bot,$event->getReplyToken(),"おはようございます!\n起床時刻が登録されました");
+        case 'wakeup' || '起床時刻':
+          setHealthData($userId,date('H:i'),'wakeup');
+          replyTextMessage($bot,$event->getReplyToken(),"おはようございます!\n起床時刻が登録されました！\n今日も一日顔晴りましょう！");
           break;
           
-        
+        case 'sleep' || '就寝時刻':
+          setHealthData($userId,date('H:i'),'sleep');
+          replyTextMessage($bot,$event->getReplyToken(),"おやすみなさい!\n就寝時刻が登録されました！\n今日も一日お疲れ様でした");
+          break;
+          
+        case '':
+          $bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
+          break;
+          
+        /*
         case $typeJap = '体重' :
           
           setInputPhase($userId,'false','weight');
@@ -183,12 +192,18 @@
           setInputPhase($userId,'false','memo');
           replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'memo');
           break;  
+          
+        */
         
         // どれでもない場合は記録を返す  
         default:
           
-          $bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
+          setInputPhase($userId,'false',switchHealthTypeLanguage($event->getText()));
+          replyInputConfirm($bot,$event->getReplyToken(),switchHealthTypeLanguage($event->getText()));
           break;
+          
+          //$bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
+          //break;
       }
         
     }
@@ -233,46 +248,45 @@
         
     }
     
-    function convertHealthType2Jap($healthType){
+    function switchHealthTypeLanguage($healthType){
       switch($healthType){
-        case 'weight': return '体重';
-          break;
-          
-        case 'muscle': return '筋肉量';
-          break;
+        case 'weight': return '体重'; break;
+        case 'muscle': return '筋肉量'; break;
+        case 'wakeup': return '起床時刻'; break;
+        case 'sleep': return '就寝時刻'; break;
+        case 'shit': return 'うんちの状態'; break;
+        case 'shit_time': return 'うんちの時刻'; break;
+        case 'pain': return '筋肉痛'; break;
+        case 'breakfast': return '朝食'; break;
+        case 'breakfast_time': return '朝食の時刻'; break;
+        case 'lunch': return '昼食'; break;
+        case 'lunch_time': return '昼食の時刻'; break;
+        case 'dinner': return '夕食'; break;
+        case 'dinner_time': return '夕食の時刻'; break;
+        case 'training': return '筋トレ'; break;
+        case 'health': return '体調'; break;
+        case 'memo': return 'メモ'; break;
         
-        case 'wakeup': return '起床時刻';
-          break;
         
-        case 'sleep': return '就寝時刻';
-          break;
-        
-        case 'shit': return 'うんちの状態';
-          break;
-        
-        case 'pain': return '筋肉痛';
-          break;
-        
-        case 'breakfast': return '朝食';
-          break;
-        
-        case 'lunch': return '昼食';
-          break;
-        
-        case 'dinner': return '夕食';
-          break;
-        
-        case 'training': return '筋トレ';
-          break;
-        
-        case 'health': return '体調';
-          break;
-        
-        case 'memo': return 'メモ';
-          break;
+        case '体重' : return 'weight'; break; 
+        case '筋肉量' : return 'muscle'; break; 
+        case '起床時刻' || 'おはよう' || 'おは': return 'wakeup'; break; 
+        case '就寝時刻' || 'おやすみ' || '寝る': return 'sleep'; break; 
+        case 'うんちの状態' || 'うんち' || 'うんこ': return 'shit'; break; 
+        case 'うんちの時刻' : return 'shit_time'; break; 
+        case '筋肉痛' : return 'pain'; break; 
+        case '朝食' : return 'hogehogefast'; break; 
+        case '朝食の時刻' : return 'hogehogefast_time'; break; 
+        case '昼食' : return 'lunch'; break; 
+        case '昼食の時刻' : return 'lunch_time'; break; 
+        case '夕食' : return 'dinner'; break; 
+        case '夕食の時刻' : return 'dinner_time'; break; 
+        case '筋トレ' : return 'training'; break; 
+        case '体調' : return 'health'; break; 
+        case 'メモ' : return 'memo'; break; 
           
         default :
-          error_log("\nfailed in convertHealthType2Jap \nrequired healthType didn't match anything.");
+          error_log("\nfailed in switchHealthTypeLanguage \nrequired healthType didn't match anything.");
           return '';
           break;
           
@@ -528,9 +542,9 @@
     
     
     
-    function replyInputConfirm($bot,$replyToken,$typeJap,$type){
+    function replyInputConfirm($bot,$replyToken,$type){
       replyConfirmTemplate($bot,$replyToken,
-      $typeJap. 'を入力します', $typeJap. 'を入力します',
+      switchHealthTypeLanguage($type). 'を入力します', switchHealthTypeLanguage($type). 'を入力します',
             new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK'),
             new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('いいえ','cmd_cancel'));
     }
