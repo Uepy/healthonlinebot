@@ -112,8 +112,9 @@
       //Postbackイベントじゃなかった場合  
       }else
       
-      
+      error_log("\nresult switchHealthTypeLanguage : " . print_r(switchHealthTypeLanguage($event->getText()),true));
       switch (switchHealthTypeLanguage($event->getText())) {
+        
         
         
         case 'wakeup' || '起床時刻':
