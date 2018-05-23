@@ -60,8 +60,33 @@
             
           case 'cmd_OK':
             setInputPhase($userId,'true','');
-            $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを入力してください");
-            break;
+            
+            switch (getHealthTypeFromInputPhase($userId)) {
+              case 'shit':
+                replyShitButton($bot,$event->getReplyToken());
+                break;
+              
+              
+              case 'pain':
+                $bot->replyText($event->getReplyToken(), '筋肉痛は準備中');
+                break;
+              
+              
+              case 'health':
+                $bot->replyText($event->getReplyToken(), '体調は準備中');
+                break;
+                
+                
+              case 'training':
+                $bot->replyText($event->getReplyToken(), '筋トレは準備中');
+                break;
+                
+                
+              default:
+                $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを入力してください");
+                break;
+            }
+            
             
           default :
             $bot->replyText($event->getReplyToken(), "不正な入力が行われたかもしれません\n申し訳ございません");
@@ -286,6 +311,7 @@
     function setInputPhase($userId,$boolInput,$healthType){
       error_log("\ncalled setInputPhase ");
       $dbh = dbConnection::getConnection();
+      // $healthTypeが空文字で渡された場合はboolinpuのみupdate
       if(!$healthType){
         error_log("\nupdate only boolInput");
         $sql = 'update tbl_input_phase set boolInput = ? 
@@ -379,6 +405,7 @@
     // buttons テンプレート アクション引数が配列版
     // Buttons テンプレートを返信 
     // 引数(LINEBot,返信先,代替テキスト,画像URL,タイトル,本文,アクション配列)
+    // 画像とタイトルはnullを指定することで省略可
     function replyButtonsTemplate($bot,$replyToken,$alterText,$imageUrl,$title,$text,$actionArray){
     
       // TemplateMessageBuilderの引数(代替テキスト,ButtonTemplateBuilder)
@@ -391,6 +418,18 @@
       if(!$response->isSucceeded()){
         error_log('failed to push buttons' . $response->getHTTPStatus . ' ' . $response->getRawBody());
       }
+    }
+    
+    function replyShitButton($bot,$replyToken){
+      $actionArray = array( 
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('下痢','cmd_下痢'),
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('便秘','cmd_便秘'),
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('快便','cmd_快便'),
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('キャンセル','cmd_cancel')
+        );
+
+      replyButtonsTemplate($bot,$replyToken,'うんコンディションの入力',
+      null,'うんコンディションの入力','うんコンディションを選択して下さい',$actionArray);
     }
     
     // Confirm テンプレートを返信 
@@ -410,6 +449,8 @@
         error_log('failed to push confirm button' . $response->getHTTPStatus . ' ' . $response->getRawBody());
       }
     }
+    
+    
     
     function replyInputConfirm($bot,$replyToken,$typeJap,$type){
       replyConfirmTemplate($bot,$replyToken,
