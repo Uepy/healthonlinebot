@@ -89,7 +89,7 @@
               
               
             default:
-              $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを入力してください
+              $bot->replyText($event->getReplyToken(), switchHealthTypeLanguage(getHealthTypeFromInputPhase($userId))."のデータを入力してください
               \n入力をキャンセルする場合は、上のキャンセルボタンを押して下さい");
               break;
           }
@@ -117,12 +117,12 @@
         
         
         
-        case  '起床時刻':
+        case  'wakeup':
           setHealthData($userId,date('H:i'),'wakeup');
           replyTextMessage($bot,$event->getReplyToken(),"おはようございます!\n起床時刻が登録されました！\n今日も一日顔晴りましょう！");
           break;
           
-        case  '就寝時刻':
+        case  'sleep':
           setHealthData($userId,date('H:i'),'sleep');
           replyTextMessage($bot,$event->getReplyToken(),"おやすみなさい!\n就寝時刻が登録されました！\n今日も一日お疲れ様でした");
           break;
