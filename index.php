@@ -306,7 +306,7 @@
     function setHealthData($userId,$data,$healthType){
       $dbh = dbConnection::getConnection();
       error_log("\ncalled setHealthData");
-      if(!$healthType === 'shit'){
+      if(!(String)$healthType === 'shit'){
         $sql = 'update ' .$userId.
         ' set ' .$healthType.' = ? where ymd = ?';
         $sth = $dbh->prepare($sql);
