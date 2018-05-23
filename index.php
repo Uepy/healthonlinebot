@@ -313,17 +313,17 @@
         $sth->execute(array($data,date('Y-m-d')));
       }else{
         switch($data){
-          case 3 : $value = '{下痢}';
+          case 3 : $value = '下痢';
             break;
           
-          case 2 : $value = '{便秘}';
+          case 2 : $value = '便秘';
             break;
           
-          default : $value = '{快便}';
+          default : $value = '快便';
             break;
         }
         $sql = 'update ' .$userId.
-        ' set ' .$healthType.' = ? where ymd = ?';
+        ' set shit = array_append(shit, ? ) where ymd = ?';
         $sth = $dbh->prepare($sql);
         $sth->execute(array($value,date('Y-m-d')));
       }
