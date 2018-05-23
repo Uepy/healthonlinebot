@@ -117,12 +117,12 @@
         
         
         
-        case 'wakeup' || '起床時刻':
+        case  '起床時刻':
           setHealthData($userId,date('H:i'),'wakeup');
           replyTextMessage($bot,$event->getReplyToken(),"おはようございます!\n起床時刻が登録されました！\n今日も一日顔晴りましょう！");
           break;
           
-        case 'sleep' || '就寝時刻':
+        case  '就寝時刻':
           setHealthData($userId,date('H:i'),'sleep');
           replyTextMessage($bot,$event->getReplyToken(),"おやすみなさい!\n就寝時刻が登録されました！\n今日も一日お疲れ様でした");
           break;
@@ -250,7 +250,8 @@
     }
     
     function switchHealthTypeLanguage($healthType){
-      switch($healthType){
+      error_log("\nhealthType : " . print_r($healthType,true));
+      switch((String)$healthType){
         case 'weight': return '体重'; break;
         case 'muscle': return '筋肉量'; break;
         case 'wakeup': return '起床時刻'; break;
@@ -271,9 +272,9 @@
         
         case '体重' : return 'weight'; break; 
         case '筋肉量' : return 'muscle'; break; 
-        case '起床時刻' || 'おはよう' || 'おは': return 'wakeup'; break; 
-        case '就寝時刻' || 'おやすみ' || '寝る': return 'sleep'; break; 
-        case 'うんちの状態' || 'うんち' || 'うんこ': return 'shit'; break; 
+        case '起床時刻' :case 'おはよう' :case 'おは': return 'wakeup'; break; 
+        case '就寝時刻' :case 'おやすみ' :case '寝る': return 'sleep'; break; 
+        case 'うんちの状態' :case 'うんち' :case 'うんこ': return 'shit'; break; 
         case 'うんちの時刻' : return 'shit_time'; break; 
         case '筋肉痛' : return 'pain'; break; 
         case '朝食' : return 'hogehogefast'; break; 
