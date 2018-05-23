@@ -101,7 +101,9 @@ insert into tbl_input_phase (userid) values (pgp_sym_encrypt('U9a6675ed0946c1160
 update tbl_input_phase set boolInput = true, dataType = 'weight' where userid = pgp_sym_encrypt('U9a6675ed0946c116097b44bd69024fd4','smiletobehealth');
 
 -- 正しくはこう
-update tbl_input_phase set boolInput = true, dataType = 'wakeup' where pgp_sym_decrypt(userid,'smiletobehealth') = 'U9a6675ed0946c116097b44bd69024fd5';
+update tbl_input_phase set boolInput = true, dataType = 'wakeup' where pgp_sym_decrypt(userid,'smiletobehealth') = 'U9a6675ed0946c116097b44bd69024fd4';
+
+update tbl_input_phase set boolInput = false where pgp_sym_decrypt(userid,'smiletobehealth') = 'U9a6675ed0946c116097b44bd69024fd4';
 
 update U9a6675ed0946c116097b44bd69024fd4 set pain = 1 where ymd = '2018-05-22';
 

@@ -50,20 +50,10 @@
       //Postbackイベントの場合
       if($event instanceof \LINE\LINEBot\Event\PostbackEvent){
         
-        if(getBoolInput($userId)){
-          if(ctype_digit(substr($event->getPostbackData(),-1))){
-            error_log("\nうんちコンディション「以外」の入力");
-            setHealthData($userId,substr($event->getPostbackData(),-1),getHealthTypeFromInputPhase($userId));
-            $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
-            setInputPhase($userId,'false','');
-          }else{
-            error_log("\nうんちコンディションの入力");
-            setHealthData($userId,'{'.substr($event->getPostbackData(),-2).'}',getHealthTypeFromInputPhase($userId));
-            $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
-            setInputPhase($userId,'false','');
-            
-          }
-
+        if(getBoolInput($userId) && ctype_digit(substr($event->getPostbackData(),-1))){
+          setHealthData($userId,substr($event->getPostbackData(),-1),getHealthTypeFromInputPhase($userId));
+          $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
+          setInputPhase($userId,'false','');
         }
         
       switch ($event->getPostbackData()) {
@@ -307,22 +297,41 @@
       ' set wakeup = ? where ymd = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array($wakeup,date('Y-m-d')));
-      error_log("\nwakeup : " . print_r($wakeup,true));
-      error_log("\nY-m-d : " . print_r(date('Y-m-d'),true));
+      // error_log("\nwakeup : " . print_r($wakeup,true));
+      //error_log("\nY-m-d : " . print_r(date('Y-m-d'),true));
     }
     
     // データをセット
     // 引数はユーザーID、入力するデータ、データを入力するフィールド
     function setHealthData($userId,$data,$healthType){
       $dbh = dbConnection::getConnection();
-      $sql = 'update ' .$userId.
-      ' set ' .$healthType.' = ? where ymd = ?';
-      $sth = $dbh->prepare($sql);
       error_log("\ncalled setHealthData");
-      error_log("\ndata : " . print_r($data,true));
-      error_log("\nhealthType : " . print_r($healthType,true));
-      error_log("\Y-m-d : " . print_r(date('Y-m-d'),true));
-      $sth->execute(array($data,date('Y-m-d')));
+      if(!$healthType === 'shit'){
+        $sql = 'update ' .$userId.
+        ' set ' .$healthType.' = ? where ymd = ?';
+        $sth = $dbh->prepare($sql);
+        $sth->execute(array($data,date('Y-m-d')));
+      }else{
+        switch($data){
+          case 3 : $value = '{下痢}';
+            break;
+          
+          case 2 : $value = '{便秘}';
+            break;
+          
+          default : $value = '{快便}';
+            break;
+        }
+        $sql = 'update ' .$userId.
+        ' set ' .$healthType.' = ? where ymd = ?';
+        $sth = $dbh->prepare($sql);
+        $sth->execute(array($value,date('Y-m-d')));
+      }
+      
+      // error_log("\ndata : " . print_r($data,true));
+      // error_log("\nhealthType : " . print_r($healthType,true));
+      // error_log("\Y-m-d : " . print_r(date('Y-m-d'),true));
+      
     }
     
     function setInputPhase($userId,$boolInput,$healthType){
@@ -333,15 +342,15 @@
         error_log("\nupdate only boolInput");
         $sql = 'update tbl_input_phase set boolInput = ? 
         where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
-        error_log("\nboolInput : " . print_r($boolInput,true));
+        // error_log("\nboolInput : " . print_r($boolInput,true));
         $sth = $dbh->prepare($sql);
         $sth->execute(array($boolInput,$userId));
       }else{
         error_log("\nupdate both boolInput and healthType");
         $sql = 'update tbl_input_phase set boolInput = ? , dataType = ? 
         where (pgp_sym_decrypt(userid,\'' . getenv('DB_ENCRYPT_PASS') . '\') ) = ?';
-        error_log("\nboolInput : " . print_r($boolInput,true));
-        error_log("\nhealthType : " . print_r($healthType,true));
+        // error_log("\nboolInput : " . print_r($boolInput,true));
+        // error_log("\nhealthType : " . print_r($healthType,true));
         $sth = $dbh->prepare($sql);
         $sth->execute(array($boolInput,$healthType,$userId));
       }
@@ -439,9 +448,9 @@
     
     function replyShitButton($bot,$replyToken){
       $actionArray = array( 
-        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('下痢','cmd_下痢'),
-        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('便秘','cmd_便秘'),
-        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('快便','cmd_快便'),
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('下痢','cmd_3'),
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('便秘','cmd_2'),
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('快便','cmd_1'),
         new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('キャンセル','cmd_cancel')
         );
 
