@@ -50,12 +50,14 @@
       //Postbackイベントの場合
       if($event instanceof \LINE\LINEBot\Event\PostbackEvent){
         
-        if(getBoolInput()){
+        if(getBoolInput($userId)){
           if(ctype_digit(substr($event->getPostbackData(),-1))){
+            error_log("\nうんちコンディション「以外」の入力");
             setHealthData($userId,substr($event->getPostbackData(),-1),getHealthTypeFromInputPhase($userId));
             $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
             setInputPhase($userId,'false','');
           }else{
+            error_log("\nうんちコンディションの入力");
             setHealthData($userId,'{'.substr($event->getPostbackData(),-2).'}',getHealthTypeFromInputPhase($userId));
             $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
             setInputPhase($userId,'false','');
