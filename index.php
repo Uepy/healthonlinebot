@@ -37,152 +37,167 @@
 
     // 配列に格納された各イベントをループ処理
     foreach ($events as $event) {
-        
-        // ユーザーIDの取得
-        $userId = $event->getUserId();
-        
-        // ユーザープロファイルの取得
-        $profile = $bot -> getProfile($userId) -> getJSONDecodedBody();
-        
-        //$bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
-        
-        
-        //Postbackイベントの場合
-        if($event instanceof \LINE\LINEBot\Event\PostbackEvent){
-          
-        switch ($event->getPostbackData()) {
       
-          case 'cmd_cancel':
+      // ユーザーIDの取得
+      $userId = $event->getUserId();
+      
+      // ユーザープロファイルの取得
+      $profile = $bot -> getProfile($userId) -> getJSONDecodedBody();
+      
+      //$bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
+      
+      
+      //Postbackイベントの場合
+      if($event instanceof \LINE\LINEBot\Event\PostbackEvent){
+        
+        if(getBoolInput()){
+          if(ctype_digit(substr($event->getPostbackData(),-1))){
+            setHealthData($userId,substr($event->getPostbackData(),-1),getHealthTypeFromInputPhase($userId));
+            $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
             setInputPhase($userId,'false','');
-            $bot->replyText($event->getReplyToken(), "入力はキャンセルされました。");
-            break;
+          }else{
+            setHealthData($userId,'{'.substr($event->getPostbackData(),-2).'}',getHealthTypeFromInputPhase($userId));
+            $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
+            setInputPhase($userId,'false','');
             
-            
-          case 'cmd_OK':
-            setInputPhase($userId,'true','');
-            
-            switch (getHealthTypeFromInputPhase($userId)) {
-              case 'shit':
-                replyShitButton($bot,$event->getReplyToken());
-                break;
-              
-              
-              case 'pain':
-                $bot->replyText($event->getReplyToken(), '筋肉痛は準備中');
-                break;
-              
-              
-              case 'health':
-                $bot->replyText($event->getReplyToken(), '体調は準備中');
-                break;
-                
-                
-              case 'training':
-                $bot->replyText($event->getReplyToken(), '筋トレは準備中');
-                break;
-                
-                
-              default:
-                $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを入力してください");
-                break;
-            }
-            
-            
-          default :
-            $bot->replyText($event->getReplyToken(), "不正な入力が行われたかもしれません\n申し訳ございません");
-            break;
-        }
-            
-        
-        // InputPaseがtrueの場合
-        // cmd_OK が押されると、inputPhaseがtrueになるのでここに遷移します
-        }else if(getBoolInput($userId)){
-          setHealthData($userId,$event->getText(),getHealthTypeFromInputPhase($userId));
-          $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
-          setInputPhase($userId,'false','');
-          
-          
-        //Postbackイベントじゃなかった場合  
-        }else
-        
-        
-        switch ($event->getText()) {
-          
-          
-          case 'おはよう' :
-            setWakeup($userId,date('H:i'));
-            replyTextMessage($bot,$event->getReplyToken(),"おはようございます!\n起床時刻が登録されました");
-            break;
-            
-          
-          case $typeJap = '体重' :
-            
-            setInputPhase($userId,'false','weight');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'weight');
-            break;
-            
-          case $typeJap = '筋肉量' :
-            
-            setInputPhase($userId,'false','muscle');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'muscle');
-            break;
-          
-          case $typeJap = '朝食' :
-            
-            setInputPhase($userId,'false','breakfast');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'breakfast');
-            break;
-          
-          case $typeJap = '昼食' :
-            
-            setInputPhase($userId,'false','lunch');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'lunch');
-            break;
-          
-          case $typeJap = '夕食' :
-            
-            setInputPhase($userId,'false','dinner');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'dinner');
-            break;
-          
-          case $typeJap = 'うんち' :
-            
-            setInputPhase($userId,'false','shit');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'shit');
-            break;
-            
-          case $typeJap = '筋肉痛' :
-            
-            setInputPhase($userId,'false','pain');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'pain');
-            break;
-            
-          case $typeJap = '体調' :
-            
-            setInputPhase($userId,'false','health');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'health');
-            break;
-            
-          case $typeJap = '筋トレ' :
-            
-            setInputPhase($userId,'false','training');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'memo');
-            break;
-            
+          }
 
-          
-          case $typeJap = 'メモ' :
-            
-            setInputPhase($userId,'false','memo');
-            replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'memo');
-            break;  
-          
-          // どれでもない場合は記録を返す  
-          default:
-            
-            $bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
-            break;
         }
+        
+      switch ($event->getPostbackData()) {
+    
+        case 'cmd_cancel':
+          setInputPhase($userId,'false','');
+          $bot->replyText($event->getReplyToken(), "入力はキャンセルされました。");
+          break;
+          
+          
+        case 'cmd_OK':
+          setInputPhase($userId,'true','');
+          
+          switch (getHealthTypeFromInputPhase($userId)) {
+            case 'shit':
+              replyShitButton($bot,$event->getReplyToken());
+              break;
+            
+            
+            case 'pain':
+              replyPainButton($bot,$event->getReplyToken());
+              break;
+            
+            
+            case 'health':
+              replyHealthButton($bot,$event->getReplyToken());
+              break;
+              
+
+            case 'training':
+              replyTrainingButton($bot,$event->getReplyToken());
+              break;
+              
+              
+            default:
+              $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを入力してください
+              \n入力をキャンセルする場合は、上のキャンセルボタンを押して下さい");
+              break;
+          }
+          
+          
+        default :
+          $bot->replyText($event->getReplyToken(), "不正な入力が行われたかもしれません\n申し訳ございません");
+          break;
+      }
+          
+      
+      // InputPaseがtrueの場合
+      // cmd_OK が押されると、inputPhaseがtrueになるのでここに遷移します
+      }else if(getBoolInput($userId)){
+        setHealthData($userId,$event->getText(),getHealthTypeFromInputPhase($userId));
+        $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
+        setInputPhase($userId,'false','');
+        
+        
+      //Postbackイベントじゃなかった場合  
+      }else
+      
+      
+      switch ($event->getText()) {
+        
+        
+        case 'おはよう' :
+          setWakeup($userId,date('H:i'));
+          replyTextMessage($bot,$event->getReplyToken(),"おはようございます!\n起床時刻が登録されました");
+          break;
+          
+        
+        case $typeJap = '体重' :
+          
+          setInputPhase($userId,'false','weight');
+          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'weight');
+          break;
+          
+        case $typeJap = '筋肉量' :
+          
+          setInputPhase($userId,'false','muscle');
+          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'muscle');
+          break;
+        
+        case $typeJap = '朝食' :
+          
+          setInputPhase($userId,'false','breakfast');
+          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'breakfast');
+          break;
+        
+        case $typeJap = '昼食' :
+          
+          setInputPhase($userId,'false','lunch');
+          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'lunch');
+          break;
+        
+        case $typeJap = '夕食' :
+          
+          setInputPhase($userId,'false','dinner');
+          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'dinner');
+          break;
+        
+        case $typeJap = 'うんち' :
+          
+          setInputPhase($userId,'false','shit');
+          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'shit');
+          break;
+          
+        case $typeJap = '筋肉痛' :
+          
+          setInputPhase($userId,'false','pain');
+          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'pain');
+          break;
+          
+        case $typeJap = '体調' :
+          
+          setInputPhase($userId,'false','health');
+          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'health');
+          break;
+          
+        case $typeJap = '筋トレ' :
+          
+          setInputPhase($userId,'false','training');
+          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'training');
+          break;
+          
+
+        
+        case $typeJap = 'メモ' :
+          
+          setInputPhase($userId,'false','memo');
+          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'memo');
+          break;  
+        
+        // どれでもない場合は記録を返す  
+        default:
+          
+          $bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
+          break;
+      }
         
     }
     
@@ -430,6 +445,40 @@
 
       replyButtonsTemplate($bot,$replyToken,'うんコンディションの入力',
       null,'うんコンディションの入力','うんコンディションを選択して下さい',$actionArray);
+    }
+    
+    function replyPainButton($bot,$replyToken){
+      $actionArray = array( 
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('痛い！','cmd_3'),
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('少し痛い','cmd_2'),
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('なし','cmd_1'),
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('キャンセル','cmd_cancel')
+        );
+
+      replyButtonsTemplate($bot,$replyToken,'筋肉痛の入力',
+      null,'筋肉痛の入力','筋肉痛の程度を選択して下さい',$actionArray);
+    }
+    
+    function replyHealthButton($bot,$replyToken){
+      $actionArray = array( 
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('良い','cmd_1'),
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('悪い','cmd_0'),
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('キャンセル','cmd_cancel')
+        );
+
+      replyButtonsTemplate($bot,$replyToken,'体調の入力',
+      null,'体調の入力','体調の程度を選択して下さい',$actionArray);
+    }
+    
+    function replyTrainingButton($bot,$replyToken){
+      $actionArray = array( 
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('した','cmd_1'),
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('してない','cmd_0'),
+        new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('キャンセル','cmd_cancel')
+        );
+
+      replyButtonsTemplate($bot,$replyToken,'筋トレの入力',
+      null,'筋トレの入力','筋トレの有無を選択して下さい',$actionArray);
     }
     
     // Confirm テンプレートを返信 
