@@ -105,7 +105,7 @@
       // cmd_OK が押されると、inputPhaseがtrueになるのでここに遷移します
       }else if(getBoolInput($userId)){
         setHealthData($userId,$event->getText(),getHealthTypeFromInputPhase($userId));
-        $bot->replyText($event->getReplyToken(), convertHealthType2Jap(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
+        $bot->replyText($event->getReplyToken(), switchHealthTypeLanguage(getHealthTypeFromInputPhase($userId))."のデータを記録しました！\nありがとうございます！！");
         setInputPhase($userId,'false','');
         
         
