@@ -311,6 +311,15 @@
         ' set ' .$healthType.' = ? where ymd = ?';
         $sth = $dbh->prepare($sql);
         $sth->execute(array($data,date('Y-m-d')));
+        
+        if((String)$healthType === 'breakfast' || (String)$healthType === 'lunch' || (String)$healthType === 'dinner'){
+          $sql = 'update ' .$userId.
+          ' set ' .$healthType.'_time = ? where ymd = ?';
+          $sth = $dbh->prepare($sql);
+          $sth->execute(array(date('H:i'),date('Y-m-d')));
+        }
+        
+        
       }else{
         switch($data){
           case 3 : $value = '下痢';
@@ -326,6 +335,13 @@
         ' set shit = array_append(shit, ? ) where ymd = ?';
         $sth = $dbh->prepare($sql);
         $sth->execute(array($value,date('Y-m-d')));
+        
+        $sql = 'update ' .$userId.
+        ' set shit_time = array_append(shit_time, ? ) where ymd = ?';
+        $sth = $dbh->prepare($sql);
+        $sth->execute(array(date('H:i'),date('Y-m-d')));
+        
+        
       }
       
       // error_log("\ndata : " . print_r($data,true));
