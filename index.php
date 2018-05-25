@@ -351,11 +351,10 @@
     // 引数で指定されたuserId に一致するユーザーの記録を簡易的な文字列で返す
     function getUserRecord($userId){
       $dbh = dbConnection::getConnection();
-      $sql = 'select ymd,weight,muscle,wakeup,sleep,shit,pain,breakfast,breakfast_time,lunch,lunch_time,dinner,dinner_time,training,health,memo from '
+      $sql = 'select ymd,weight,muscle,wakeup,sleep,shit,shit_time,pain,breakfast,breakfast_time,lunch,lunch_time,dinner,dinner_time,training,health,memo from '
       .$userId .' where ymd = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array(date('Y-m-d')));
-      //$sth = $dbh->query($sql);
       $result = $sth->fetchAll();
       //error_log("\nfetchAll : " . print_r($result,true));
       //error_log("\nresult[0] : " . print_r($result[0],true));
@@ -375,26 +374,11 @@
       $teststring = '';
       
       while(key($result[0])){
-        error_log("\nswitchHealthTypeLanguage(key(result[0])) : " . print_r(switchHealthTypeLanguage(key($result[0])),true));
-        error_log("\ncurrent(result[0]) : " . print_r(current($result[0]),true));
-        $teststring .= switchHealthTypeLanguage(key($result[0])). ' : ' .current($result[0])."\n";
+        $teststring .= switchHealthTypeLanguage(key($result[0])). ' : ' .num2String(current($result[0]))."\n";
         next($result[0]);
         next($result[0]);
       }
-      
-      /*
-      $teststring = 
-      
-      "日付 : ". array_column($result,'ymd')[0] ."\n体重 : ". array_column($result,'weight')[0] .
-      "\n筋肉量 : ". array_column($result,'muscle')[0] ."\n起床時刻 : ". array_column($result,'wakeup')[0] .
-      "\n就寝時刻 : ". array_column($result,'sleep')[0] ."\nうんちの状態 : ". array_column($result,'shit')[0].
-      "\n筋肉痛 : ". array_column($result,'pain')[0] ."\n朝食 : ". array_column($result,'breakfast')[0] .
-      "\n昼食 : ". array_column($result,'lunch')[0] ."\n夕食 : ". array_column($result,'dinner')[0] .
-      "\n筋トレ : ". array_column($result,'training')[0] ."\n健康状態 : ". array_column($result,'health')[0] .
-      "\nメモ : ". array_column($result,'memo')[0];
-      */
-      
-      return $teststring;
+      return rtrim($teststring,"\n");
     }
     
     // テキストを返信 引数はLINEbot、返信先、テキストメッセージ
@@ -480,6 +464,34 @@
       replyButtonsTemplate($bot,$replyToken,'筋トレの入力',
       null,'筋トレの入力','筋トレの有無を選択して下さい',$actionArray);
     }
+    
+    function num2String($data,$healthType){
+      if(substr($healthType,-5) == '_time' ) {
+        return substr($data,5);
+      }else if((String)$healthType === 'pain'){
+        switch ($data) {
+          case 1: return 'なし' ;break;
+          case 2: return '少し痛い' ;break;
+          case 3: return '痛い！' ;break;
+        }
+      
+      }else if ((String)$healthType === 'health') {
+        switch ($data) {
+          case 0: return '悪い' ;break;
+          case 1: return '良い' ;break;
+        }
+        
+      }else if ((String)$healthType === 'training') {
+        switch ($data) {
+          case 0: return 'してない' ;break;
+          case 1: return 'した' ;break;
+        }
+        
+      }
+      
+      else return $data;
+    }
+    
     
     // Confirm テンプレートを返信 
     // 引数(LINEBot,返信先,代替テキスト,本文,可変長アクション配列)
