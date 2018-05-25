@@ -356,30 +356,32 @@
       $sth->execute(array(date('Y-m-d')));
       //$sth = $dbh->query($sql);
       $result = $sth->fetchAll();
-      error_log("\nfetchAll : " . print_r($result,true));
-      error_log("\nresult[0] : " . print_r($result[0],true));
-      error_log("\nresult[0][0] : " . print_r($result[0][0],true));
-      error_log("\nresult[0][ymd] : " . print_r($result[0]['ymd'],true));
-      error_log("\nkey of result[0] : " . print_r(key($result[0]),true));
-      next($result[0]);
-      error_log("\nnext0 key of result[0] : " . print_r(key($result[0]),true));
-      next($result[0]);
-      error_log("\nnext1 key of result[0] : " . print_r(key($result[0]),true));
-      next($result[0]);
-      error_log("\nnext2 key of result[0] : " . print_r(key($result[0]),true));
-      next($result[0]);
-      error_log("\nnext3 key of result[0] : " . print_r(key($result[0]),true));
+      //error_log("\nfetchAll : " . print_r($result,true));
+      //error_log("\nresult[0] : " . print_r($result[0],true));
+      //error_log("\nresult[0][0] : " . print_r($result[0][0],true));
+      //error_log("\nresult[0][ymd] : " . print_r($result[0]['ymd'],true));
+      //error_log("\nkey of result[0] : " . print_r(key($result[0]),true));
+      //next($result[0]);
+      //error_log("\nnext0 key of result[0] : " . print_r(key($result[0]),true));
+      //next($result[0]);
+      //error_log("\nnext1 key of result[0] : " . print_r(key($result[0]),true));
+      //next($result[0]);
+      //error_log("\nnext2 key of result[0] : " . print_r(key($result[0]),true));
+      //next($result[0]);
+      //error_log("\nnext3 key of result[0] : " . print_r(key($result[0]),true));
       //error_log("\narraycolumn ymd : " . print_r(array_column($result,'ymd'),true));
       //error_log("\narraycolumn ymd0 : " . print_r(array_column($result,'ymd')[0],true));
       $teststring = '';
       
-      /*
-      foreach($result as $value){
-        $teststring += array_column($result[0],key($result[0]));
+      while(current($result[0])){
+        error_log("\nswitchHealthTypeLanguage(key(result[0])) : " . print_r(key(switchHealthTypeLanguage(key($result[0]))),true));
+        error_log("\ncurrent(result[0]) : " . print_r(current($result[0]),true));
+        $teststring += switchHealthTypeLanguage(key($result[0])). ' : ' .current($result[0])."\n";
+        next($result[0]);
+        next($result[0]);
       }
       
-      */
-      
+      /*
       $teststring = 
       
       "日付 : ". array_column($result,'ymd')[0] ."\n体重 : ". array_column($result,'weight')[0] .
@@ -389,6 +391,8 @@
       "\n昼食 : ". array_column($result,'lunch')[0] ."\n夕食 : ". array_column($result,'dinner')[0] .
       "\n筋トレ : ". array_column($result,'training')[0] ."\n健康状態 : ". array_column($result,'health')[0] .
       "\nメモ : ". array_column($result,'memo')[0];
+      */
+      
       return $teststring;
     }
     
