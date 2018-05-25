@@ -466,8 +466,12 @@
     }
     
     function num2String($data,$healthType){
-      if(substr($healthType,-5) == '_time' ) {
-        return substr($data,5);
+      if((String)$healthType === 'weight' || (String)$healthType === 'muscle'){
+        if($data) return $data .= ' kg';
+        else return $data ;
+      }else if(substr($healthType,-5) == '_time' || (String)$healthType === 'wakeup' || (String)$healthType === 'sleep') {
+        if((String)$healthType === 'shit_time') return $data;
+        else return substr($data,0,5);
       }else if((String)$healthType === 'pain'){
         switch ($data) {
           case 1: return 'なし' ;break;
