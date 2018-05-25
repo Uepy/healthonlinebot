@@ -114,9 +114,7 @@
       
       
       switch (switchHealthTypeLanguage($event->getText())) {
-        
-        
-        
+
         case  'wakeup':
           setHealthData($userId,date('H:i'),'wakeup');
           replyTextMessage($bot,$event->getReplyToken(),"おはようございます!\n起床時刻が登録されました！\n今日も一日顔晴りましょう！");
@@ -131,80 +129,13 @@
           $bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
           break;
           
-        /*
-        case $typeJap = '体重' :
-          
-          setInputPhase($userId,'false','weight');
-          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'weight');
-          break;
-          
-        case $typeJap = '筋肉量' :
-          
-          setInputPhase($userId,'false','muscle');
-          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'muscle');
-          break;
         
-        case $typeJap = '朝食' :
-          
-          setInputPhase($userId,'false','breakfast');
-          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'breakfast');
-          break;
-        
-        case $typeJap = '昼食' :
-          
-          setInputPhase($userId,'false','lunch');
-          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'lunch');
-          break;
-        
-        case $typeJap = '夕食' :
-          
-          setInputPhase($userId,'false','dinner');
-          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'dinner');
-          break;
-        
-        case $typeJap = 'うんち' :
-          
-          setInputPhase($userId,'false','shit');
-          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'shit');
-          break;
-          
-        case $typeJap = '筋肉痛' :
-          
-          setInputPhase($userId,'false','pain');
-          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'pain');
-          break;
-          
-        case $typeJap = '体調' :
-          
-          setInputPhase($userId,'false','health');
-          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'health');
-          break;
-          
-        case $typeJap = '筋トレ' :
-          
-          setInputPhase($userId,'false','training');
-          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'training');
-          break;
-          
-
-        
-        case $typeJap = 'メモ' :
-          
-          setInputPhase($userId,'false','memo');
-          replyInputConfirm($bot,$event->getReplyToken(),$typeJap,'memo');
-          break;  
-          
-        */
-        
-        // どれでもない場合は記録を返す  
         default:
           
           setInputPhase($userId,'false',switchHealthTypeLanguage($event->getText()));
           replyInputConfirm($bot,$event->getReplyToken(),switchHealthTypeLanguage($event->getText()));
           break;
-          
-          //$bot->replyText($event->getReplyToken(), getUserName($userId) ."さんの記録\n" .getUserRecord($userId) );
-          //break;
+
       }
         
     }
@@ -306,28 +237,21 @@
       return $userName[0];
     }
     
-    // 起床時刻をセット
-    function setWakeup($userId,$wakeup){
-      $dbh = dbConnection::getConnection();
-      $sql = 'update ' .$userId.
-      ' set wakeup = ? where ymd = ?';
-      $sth = $dbh->prepare($sql);
-      $sth->execute(array($wakeup,date('Y-m-d')));
-      // error_log("\nwakeup : " . print_r($wakeup,true));
-      //error_log("\nY-m-d : " . print_r(date('Y-m-d'),true));
-    }
     
     // データをセット
     // 引数はユーザーID、入力するデータ、データを入力するフィールド
     function setHealthData($userId,$data,$healthType){
       $dbh = dbConnection::getConnection();
       error_log("\ncalled setHealthData");
+      
+      // うんちの状態以外の時
       if(!((String)$healthType === 'shit')){
         $sql = 'update ' .$userId.
         ' set ' .$healthType.' = ? where ymd = ?';
         $sth = $dbh->prepare($sql);
         $sth->execute(array($data,date('Y-m-d')));
         
+        // 朝食、昼食、夕食の時は入力の時刻も合わせて記録
         if((String)$healthType === 'breakfast' || (String)$healthType === 'lunch' || (String)$healthType === 'dinner'){
           $sql = 'update ' .$userId.
           ' set ' .$healthType.'_time = ? where ymd = ?';
@@ -335,7 +259,8 @@
           $sth->execute(array(date('H:i'),date('Y-m-d')));
         }
         
-        
+      
+      // うんちの時   
       }else{
         switch($data){
           case 3 : $value = '下痢';
@@ -366,6 +291,7 @@
       
     }
     
+    // tbl_input_phaseのboolinputとhealthtypeのセッター
     function setInputPhase($userId,$boolInput,$healthType){
       error_log("\ncalled setInputPhase ");
       $dbh = dbConnection::getConnection();
@@ -389,6 +315,7 @@
 
     }
     
+    // tbl_input_phaseのboolinputのゲッター
     function getBoolInput($userId){
       $dbh = dbConnection::getConnection();
       error_log("\ncalled getBoolInput");
@@ -406,6 +333,7 @@
       }
     }
     
+    // tbl_input_phaseのhealthtypeのゲッター
     function getHealthTypeFromInputPhase($userId){
       error_log("\ncalled getHealthTypeFromInputPhase");
       $dbh = dbConnection::getConnection();
@@ -419,18 +347,38 @@
       return $healthType;
     }
     
-    // userId に一致するユーザーの記録を返す
+    // 引数で指定されたuserId に一致するユーザーの記録を簡易的な文字列で返す
     function getUserRecord($userId){
       $dbh = dbConnection::getConnection();
-      $sql = 'select ymd,weight,muscle,wakeup,sleep,shit,pain,breakfast,lunch,dinner,training,health,memo from ' .$userId .' where ymd = ?';
+      $sql = 'select ymd,weight,muscle,wakeup,sleep,shit,pain,breakfast,breakfast_time,lunch,lunch_time,dinner,dinner_time,training,health,memo from '
+      .$userId .' where ymd = ?';
       $sth = $dbh->prepare($sql);
       $sth->execute(array(date('Y-m-d')));
       //$sth = $dbh->query($sql);
       $result = $sth->fetchAll();
-      //error_log("\nfetchAll : " . print_r($result,true));
+      error_log("\nfetchAll : " . print_r($result,true));
+      error_log("\nresult[0] : " . print_r($result[0],true));
+      error_log("\nresult[0][0] : " . print_r($result[0][0],true));
+      error_log("\nresult[0][ymd] : " . print_r($result[0][ymd],true));
+      error_log("\nkey of result[0] : " . print_r(key($result[0]),true));
+      error_log("\nnext0 key of result[0] : " . print_r(key(next($result[0])),true));
+      error_log("\nnext1 key of result[0] : " . print_r(key(next($result[0])),true));
+      error_log("\nnext2 key of result[0] : " . print_r(key(next($result[0])),true));
+      error_log("\nnext3 key of result[0] : " . print_r(key(next($result[0])),true));
       //error_log("\narraycolumn ymd : " . print_r(array_column($result,'ymd'),true));
       //error_log("\narraycolumn ymd0 : " . print_r(array_column($result,'ymd')[0],true));
-      $teststring = "日付 : ". array_column($result,'ymd')[0] ."\n体重 : ". array_column($result,'weight')[0] .
+      $teststring = '';
+      
+      /*
+      foreach($result as $value){
+        $teststring += array_column($result[0],key($result[0]));
+      }
+      
+      */
+      
+      $teststring = 
+      
+      "日付 : ". array_column($result,'ymd')[0] ."\n体重 : ". array_column($result,'weight')[0] .
       "\n筋肉量 : ". array_column($result,'muscle')[0] ."\n起床時刻 : ". array_column($result,'wakeup')[0] .
       "\n就寝時刻 : ". array_column($result,'sleep')[0] ."\nうんちの状態 : ". array_column($result,'shit')[0].
       "\n筋肉痛 : ". array_column($result,'pain')[0] ."\n朝食 : ". array_column($result,'breakfast')[0] .
@@ -550,6 +498,21 @@
             new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('はい','cmd_OK'),
             new LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('いいえ','cmd_cancel'));
     }
+    
+    
+        /*
+    // setHealthDataメソッドで全て入力しているため現在は使っていない
+    // 起床時刻をセット 
+    function setWakeup($userId,$wakeup){
+      $dbh = dbConnection::getConnection();
+      $sql = 'update ' .$userId.
+      ' set wakeup = ? where ymd = ?';
+      $sth = $dbh->prepare($sql);
+      $sth->execute(array($wakeup,date('Y-m-d')));
+      // error_log("\nwakeup : " . print_r($wakeup,true));
+      //error_log("\nY-m-d : " . print_r(date('Y-m-d'),true));
+    }
+    */
 
 
  ?>
