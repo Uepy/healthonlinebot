@@ -374,7 +374,7 @@
       $teststring = '';
       
       while(key($result[0])){
-        $teststring .= switchHealthTypeLanguage(key($result[0])). ' : ' .num2String(current($result[0]))."\n";
+        $teststring .= switchHealthTypeLanguage(key($result[0])). ' : ' .num2String(current($result[0]),key($result[0]))."\n";
         next($result[0]);
         next($result[0]);
       }
