@@ -374,7 +374,7 @@
       //error_log("\narraycolumn ymd0 : " . print_r(array_column($result,'ymd')[0],true));
       $teststring = '';
       
-      while(current($result[0])){
+      while(key($result[0])){
         error_log("\nswitchHealthTypeLanguage(key(result[0])) : " . print_r(switchHealthTypeLanguage(key($result[0])),true));
         error_log("\ncurrent(result[0]) : " . print_r(current($result[0]),true));
         $teststring .= switchHealthTypeLanguage(key($result[0])). ' : ' .current($result[0])."\n";
