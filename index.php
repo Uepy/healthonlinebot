@@ -183,6 +183,7 @@
     function switchHealthTypeLanguage($healthType){
       error_log("\nhealthType : " . print_r($healthType,true));
       switch((String)$healthType){
+        case 'ymd': return '日付'; break;
         case 'weight': return '体重'; break;
         case 'muscle': return '筋肉量'; break;
         case 'wakeup': return '起床時刻'; break;
@@ -374,9 +375,9 @@
       $teststring = '';
       
       while(current($result[0])){
-        error_log("\nswitchHealthTypeLanguage(key(result[0])) : " . print_r(key(switchHealthTypeLanguage(key($result[0]))),true));
+        error_log("\nswitchHealthTypeLanguage(key(result[0])) : " . print_r(switchHealthTypeLanguage(key($result[0])),true));
         error_log("\ncurrent(result[0]) : " . print_r(current($result[0]),true));
-        $teststring += switchHealthTypeLanguage(key($result[0])). ' : ' .current($result[0])."\n";
+        $teststring .= switchHealthTypeLanguage(key($result[0])). ' : ' .current($result[0])."\n";
         next($result[0]);
         next($result[0]);
       }
