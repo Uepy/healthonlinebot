@@ -48,6 +48,9 @@
         $sql = 'insert into U9a6675ed0946c116097b44bd69024fd4 (ymd) values ( ? ) ' ;
         $sth = $dbh->prepare($sql);
         $sth->execute(array(date('Y-m-d')));
+        $sql = 'insert into U50e824a2b99879f2eeaad1138c29e8d5 (ymd) values ( ? ) ' ;
+        $sth = $dbh->prepare($sql);
+        $sth->execute(array(date('Y-m-d')));
     }
 
 ?>
